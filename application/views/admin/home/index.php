@@ -121,7 +121,7 @@
 	var myPieChart = new Chart(ctx, {
 		type: 'doughnut',
 		data: {
-			labels: ["Tidak Terealisasi", "Realisasi"],
+			labels: ["Terealisasi", "Tidak Terealisasi"],
 			datasets: [{
 				data: [<?= $pengeluaran_bulan ?>, <?= $sisa_anggaran ?>],
 				backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],

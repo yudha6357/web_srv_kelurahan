@@ -1,16 +1,15 @@
 <?php $this->load->view("css/css.php") ?>
-<link href="
-vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="<?= base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 <?php $this->load->view("layout/admin.php") ?>
 <div class="container-fluid" id="container-wrapper">
 	<div class="d-sm-flex align-items-center justify-content-between mb-4">
-		<h1 class="h3 mb-0 text-gray-800">DataTables</h1>
+		<h1 class="h3 mb-0 text-gray-800">Data Anggaran</h1>
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item">
 				<aanggaran copy href="./">Home</aanggaran>
 			</li>
 			<li class="breadcrumb-item">Tables</li>
-			<li class="breadcrumb-item active" aria-current="page">DataTables</li>
+			<li class="breadcrumb-item active" aria-current="page">Data Anggaran</li>
 		</ol>
 	</div>
 
@@ -20,7 +19,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 		<div class="col-lg-12">
 			<div class="card mb-4">
 				<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-					<h6 class="m-0 font-weight-bold text-primary">DataTables</h6>
+					<h6 class="m-0 font-weight-bold text-primary">Data Anggaran</h6>
 				</div>
 				<div style="padding-left: 2%;">
 					<button type="button" class="btn btn-primary" style="width:7%;" data-toggle="modal" data-target="#exampleModal">
@@ -150,6 +149,11 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 <?php $this->load->view("footer/footer.php") ?>
 <?php $this->load->view("js/js.php") ?>
 <script>
+	$(document).ready(function() {
+		$('#dataTable').DataTable(); // ID From dataTable 
+		$('#dataTableHover').DataTable(); // ID From dataTable with Hover
+	});
+
 	function autofill() {
 		var kode = $("#kode").val();
 		$.ajax({

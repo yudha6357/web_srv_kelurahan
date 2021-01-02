@@ -4,13 +4,13 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 <?php $this->load->view("layout/admin.php") ?>
 <div class="container-fluid" id="container-wrapper">
 	<div class="d-sm-flex align-items-center justify-content-between mb-4">
-		<h1 class="h3 mb-0 text-gray-800">DataTables</h1>
+		<h1 class="h3 mb-0 text-gray-800">Rekap Pengeluaran</h1>
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item">
 				<aanggaran copy href="./">Home</aanggaran>
 			</li>
 			<li class="breadcrumb-item">Tables</li>
-			<li class="breadcrumb-item active" aria-current="page">DataTables</li>
+			<li class="breadcrumb-item active" aria-current="page">Rekap Pengeluaran</li>
 		</ol>
 	</div>
 
@@ -20,7 +20,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 		<div class="col-lg-12">
 			<div class="card mb-4">
 				<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-					<h6 class="m-0 font-weight-bold text-primary">DataTables</h6>
+					<h6 class="m-0 font-weight-bold text-primary">Rekap Pengeluaran</h6>
 				</div>
 				<div style="padding-left: 2%;">
 					<div class="input-group" style="width: 20%;">

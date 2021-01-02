@@ -4,11 +4,14 @@ class Admin_model extends CI_Model
 
 	function get_month()
 	{
-		$a = date('m');
-
+		$year = date('m');
+		$month = date('Y');
+		// print_r($b);
+		// die();
 		$this->db->select('month(created_at) as bulan');
 		$this->db->from('transaksi');
-		$this->db->where('month(created_at)', $a);
+		$this->db->where('month(created_at)', $month);
+		$this->db->where('year(created_at)', $year);
 		return $this->db->get();
 	}
 
