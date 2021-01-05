@@ -4,28 +4,33 @@ class Rekap_model extends CI_Model
 
 	function rekap($data)
 	{
-		$query = $this->db->query("SELECT a.kegiatan, a.anggaran, IFNULL (g.pengeluaran,0) pengeluaran, IFNULL(a.anggaran-g.pengeluaran,a.anggaran) sisa
-		FROM anggaran a
-		LEFT JOIN (SELECT t.kode, SUM(t.pengeluaran)as pengeluaran from transaksi t GROUP BY t.kode , t.pengeluaran) as g
-		ON g.kode = a.kode WHERE a.bulan_realisasi LIKE '%$data%'")->result();
+		$query = $this->db->query("SELECT a.kegiatan, a.anggaran, IFNULL (g.pengeluaran,0) pengeluaran, IFNULL(a.anggaran-g.pengeluaran,a.anggaran) sisa 
+			FROM anggaran a 
+				LEFT JOIN( SELECT t.kode, SUM(t.pengeluaran)as pengeluaran 
+				from transaksi t 
+				WHERE MONTH('t.created_at') like $data['monthTemp'] AND YEAR(t.created_at) like $data['year'] GROUP BY t.kode , t.pengeluaran) as g 
+			ON g.kode = a.kode WHERE a.bulan_realisasi LIKE $data['month'] and YEAR(a.created_at) = $data['year']")->result();
 		return $query;
 	}
 
-	function anggaran_bulan($month)
+	function anggaran_bulan($data)
 	{
+		$array = array('year(created_at)' => $data['year'], 'bulan_realisasi like' => '%'.$data['month'].'%');
 		$this->db->select_sum('anggaran');
 		$this->db->from('anggaran');
-		$this->db->like('bulan_realisasi', $month);
+		$this->db->where($array);
 		return $this->db->get();
 	}
 
-	function pengeluaran_bulan($month)
+	function pengeluaran_bulan($data)
 	{
 		$this->db->select_sum('pengeluaran');
 		$this->db->from('transaksi');
-		$this->db->where('month(created_at)', $month);
+		$this->db->where('month(created_at)', $data['monthTemp']);
+		$this->db->where('year(created_at)', $data['year']);
 		return $this->db->get();
 	}
+
 
 	function anggaran_tahunan()
 	{

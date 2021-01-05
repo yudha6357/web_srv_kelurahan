@@ -121,7 +121,7 @@
 							</select>
 						</div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-primary">Save changes</button>
+						<button type="submit" id="save" class="btn btn-primary">Save changes</button>
 					</form>
 				</div>
 			</div>
@@ -188,20 +188,18 @@
 <?php $this->load->view("js/js.php") ?>
 <!-- <script scr="<?= base_url('assets/'); ?>vendor/select2/dist/js/select2.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script src="http://www.google.com/jsapi?key=ABQIAAAA1XbMiDxx_BTCY2_FkPh06RRaGTYH6UMl8mADNa0YKuWNNa8VNxQEerTAUcfkyrr6OwBovxn7TDAH5Q"></script>
 <script>
-	$(document).ready(function() {
-		$('#dataTable').DataTable(); // ID From dataTable 
-		$('#dataTableHover').DataTable(); // ID From dataTable with Hover
-	});
 
 	$(document).ready(function() {
+		$('#dataTable').DataTable(); // ID From dataTable 
+		$('#dataTableHover').DataTable(); // ID From dataTable with Hover	
+
 		$('#targetId').select2({
 			width: '100%',
 			dropdownParent: $("#exampleModal")
 		})
-	});
 
-	$(document).ready(function() {
 		<?php $no = 0;
 		foreach ($anggaran as $item) : $no++; ?>
 			$('#targetIdEdit<?= $item->id ?>').select2({
@@ -209,6 +207,19 @@
 				dropdownParent: $("#exampleModalEdit<?= $item->id ?>")
 			})
 		<?php endforeach  ?>
+
+
+		$("#save").click(function(event){
+		var volumeTemp = $("#volume").val();
+		var volume = parseInt(volumeTemp)
+		var bulan = $("#targetId").val();
+		 if (volume != bulan.length ) {	 
+			event.preventDefault();
+			alert("Jumlah bulan dan volume tidak sesuai")
+		 }
+
+		});
+
 	});
 </script>
 </body>

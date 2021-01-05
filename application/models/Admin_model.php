@@ -4,8 +4,8 @@ class Admin_model extends CI_Model
 
 	function get_month()
 	{
-		$year = date('m');
-		$month = date('Y');
+		$month = date('m');
+		$year = date('Y');
 		// print_r($b);
 		// die();
 		$this->db->select('month(created_at) as bulan');
@@ -17,17 +17,34 @@ class Admin_model extends CI_Model
 
 	function anggaran_bulan($month)
 	{
+		$year = date('Y');
+		$array = array('year(created_at)' => $year, 'bulan_realisasi like' => '%'.$month.'%');
 		$this->db->select_sum('anggaran');
 		$this->db->from('anggaran');
-		$this->db->like('bulan_realisasi', $month);
+		$this->db->where($array);
+		return $this->db->get();
+	}
+
+	function anggaran_bulan_rekap($data)
+	{
+		print_r($data);
+		die;
+
+		// $array = array('year(created_at)' => $year, 'bulan_realisasi like' => '%'.$month.'%');
+		$this->db->select_sum('anggaran');
+		$this->db->from('anggaran');
+		// $this->db->where($array);
 		return $this->db->get();
 	}
 
 	function pengeluaran_bulan($month)
 	{
+		$year = date('Y');
+
 		$this->db->select_sum('pengeluaran');
 		$this->db->from('transaksi');
 		$this->db->where('month(created_at)', $month);
+		$this->db->where('year(created_at)', $year);
 		return $this->db->get();
 	}
 

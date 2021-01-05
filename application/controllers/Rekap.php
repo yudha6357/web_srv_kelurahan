@@ -13,6 +13,7 @@ class Rekap extends CI_Controller
 
 	public function index()
 	{
+		$data['tahun'] = $this->db->select('year(created_at) as tahun')->get('anggaran')->result_array();
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 		$this->load->view('admin/rekap/index', $data);
 	}
@@ -20,20 +21,19 @@ class Rekap extends CI_Controller
 	public function ajax()
 	{
 
-		$data = $this->input->post();
-
-		$hasil['month'] = $data['month'];
-		$monthTemp = $this->admin_model->monthstr($hasil['month']);
-		$anggaranBulanTemp = $this->admin_model->anggaran_bulan($hasil['month'])->result();
-		$pengeluaranBulanTemp = $this->admin_model->pengeluaran_bulan($monthTemp)->result();
+		$data['year'] = $this->input->post('year');
+		$data['month'] = $this->input->post('month');
+		$data['monthTemp'] = $this->admin_model->monthstr($data['month']);
+		$anggaranBulanTemp = $this->rekap_model->anggaran_bulan($data)->result();	
+		$pengeluaranBulanTemp = $this->rekap_model->pengeluaran_bulan($data)->result();
 		$hasil['anggaran_bulan'] = $anggaranBulanTemp[0]->anggaran;
 		$hasil['pengeluaran_bulan'] = $pengeluaranBulanTemp[0]->pengeluaran;
 		$hasil['sisa_anggaran'] = $anggaranBulanTemp[0]->anggaran - $pengeluaranBulanTemp[0]->pengeluaran;
 		$hasil['anggaran_tahunan'] = $this->admin_model->anggaran_tahunan();
 		$hasil['sisa_tahunan'] = $this->admin_model->sisa_tahunan();
-		$hasil['rekap'] = $this->rekap_model->rekap($hasil['month']);
-		// print_r($hasil);
-		// die;
+		$hasil['rekap'] = $this->rekap_model->rekap($data);
+		print_r($hasil['rekap']);
+		die;
 
 
 		echo json_encode($hasil);

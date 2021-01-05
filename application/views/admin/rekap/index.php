@@ -23,25 +23,38 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 					<h6 class="m-0 font-weight-bold text-primary">Rekap Pengeluaran</h6>
 				</div>
 				<div style="padding-left: 2%;">
-					<div class="input-group" style="width: 20%;">
-						<select class="form-control" name="month" id="month">
-								<option>Januari</option>
-								<option>Februari</option>
-								<option>Maret</option>
-								<option>April</option>
-								<option>Mei</option>
-								<option>Juni</option>
-								<option>Juli</option>
-								<option>Agustus</option>
-								<option>September</option>
-								<option>Oktober</option>
-								<option>November</option>
-								<option>Desember</option>
-							</select>
-						<div class="input-group-append">
-							<span class="input-group-text lime lighten-2" id="search" onclick="search()"><i class="fas fa-search text-grey" aria-hidden="true"></i></span>
-						</div>
-					</div>
+							<div class="form-group">
+								<label for="exampleInputEmail1">Tahun</label>
+									<select class="form-control" style="width: 30%;" name="year" id="year">
+										<?php foreach ($tahun as $item) { ?>
+											<option><?= $item['tahun'] ?></option>
+										<?php }?>
+									</select>
+							</div>
+							<div class="form-group">
+								<label for="exampleInputEmail1">Bulan</label>
+								<select class="form-control" style="width: 30%;" name="month" id="month">
+										<option>Januari</option>
+										<option>Februari</option>
+										<option>Maret</option>
+										<option>April</option>
+										<option>Mei</option>
+										<option>Juni</option>
+										<option>Juli</option>
+										<option>Agustus</option>
+										<option>September</option>
+										<option>Oktober</option>
+										<option>November</option>
+										<option>Desember</option>
+									</select>
+							</div>
+              <button type="submit" class="btn btn-primary" id="search" onclick="search()" ><i class="fas fa-search text-grey" aria-hidden="true"></i> Search</button>
+
+						<!-- </div> -->
+						<!-- <div class="input-group-append"> -->
+							<!-- <span class="input-group-text lime lighten-2" id="search" onclick="search()"><i class="fas fa-search text-grey" aria-hidden="true"></i></span> -->
+						<!-- </div> -->
+					<!-- </div> -->
 				</div>
 
 				<div class="table-responsive p-3">
@@ -79,12 +92,14 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 <script>
 	function search() {
 		var month = $("#month").val();
+		var year = $("#year").val();
 		$('#data').empty();
     $('#search-btn').empty();
 		$.ajax({
 			url: '<?= base_url('Rekap/ajax') ?>',
 			data: {
-				month: month
+				month: month,
+				year:year
 			},
 			type: "POST",
 			dataType: 'json',
@@ -109,7 +124,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 						labels: ["Terealisasi", "Tidak Terealisasi"],
 						datasets: [{
 							data: [ response.pengeluaran_bulan , response.sisa_anggaran],
-							backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+							backgroundColor: ['#1cc88a', '#FF0000', '#36b9cc'],
 							hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
 							hoverBorderColor: "rgba(234, 236, 244, 1)",
 						}],
