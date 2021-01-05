@@ -8,8 +8,8 @@ class Rekap_model extends CI_Model
 			FROM anggaran a 
 				LEFT JOIN( SELECT t.kode, SUM(t.pengeluaran)as pengeluaran 
 				from transaksi t 
-				WHERE MONTH('t.created_at') like $data['monthTemp'] AND YEAR(t.created_at) like $data['year'] GROUP BY t.kode , t.pengeluaran) as g 
-			ON g.kode = a.kode WHERE a.bulan_realisasi LIKE $data['month'] and YEAR(a.created_at) = $data['year']")->result();
+				WHERE MONTH(t.created_at) =" . $data['monthTemp'] ." AND YEAR(t.created_at) = " .$data['year'] ." GROUP BY t.kode , t.pengeluaran) as g 
+			ON g.kode = a.kode WHERE a.bulan_realisasi LIKE ".$data['month'] ." and YEAR(a.created_at) = " . $data['year'])->result();
 		return $query;
 	}
 
