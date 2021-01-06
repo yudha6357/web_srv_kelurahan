@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 29, 2020 at 01:31 PM
+-- Generation Time: Jan 06, 2021 at 11:17 AM
 -- Server version: 8.0.22-0ubuntu0.20.04.3
 -- PHP Version: 7.4.3
 
@@ -34,17 +34,20 @@ CREATE TABLE `anggaran` (
   `kegiatan` varchar(255) NOT NULL,
   `anggaran` varchar(255) NOT NULL,
   `volume` varchar(255) NOT NULL,
-  `bulan_realisasi` varchar(255) NOT NULL
+  `bulan_realisasi` varchar(255) NOT NULL,
+  `created_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `anggaran`
 --
 
-INSERT INTO `anggaran` (`id`, `kode`, `kegiatan`, `anggaran`, `volume`, `bulan_realisasi`) VALUES
-(1, '001', 'pulpen', '100000', '2', '[\"Februari\",\"April\",\"November\",\"Desember\"]'),
-(3, '002', 'spidol', '100000', '2', '[\"Mei\",\"November\"]'),
-(4, '003', 'jancok', '100000', '3', '[\"Januari\",\"Maret\",\"November\"]');
+INSERT INTO `anggaran` (`id`, `kode`, `kegiatan`, `anggaran`, `volume`, `bulan_realisasi`, `created_at`) VALUES
+(1, '001', 'pulpen', '100000', '2', '[\"Februari\",\"April\",\"November\",\"Desember\"]', '2020-01-02'),
+(3, '002', 'spidol', '100000', '2', '[\"Mei\",\"November\"]', NULL),
+(4, '003', 'jancok', '100000', '3', '[\"Januari\",\"Maret\",\"November\"]', NULL),
+(6, '00008', 'pelatihan', '100000', '4', '[\"Januari\",\"April\",\"Agustus\",\"November\"]', NULL),
+(7, '0009', 'training', '100000', '2', '[\"Januari\",\"Oktober\"]', '2021-01-02');
 
 -- --------------------------------------------------------
 
@@ -88,7 +91,9 @@ INSERT INTO `transaksi` (`id`, `kode`, `kegiatan`, `pengeluaran`, `created_at`, 
 (1, '001', 'pulpen', '10000', '2020-05-13', NULL),
 (3, '002', 'spidol', '10000', '2020-11-14', NULL),
 (4, '001', 'pulpen', '10000', '2020-11-28', NULL),
-(5, '001', 'pulpen', '10000', '2020-12-17', NULL);
+(5, '001', 'pulpen', '10000', '2020-12-17', NULL),
+(10, '00008', 'pelatihan', '1000', '2021-01-02', NULL),
+(11, '0009', 'training', '1000', '2021-01-04', NULL);
 
 -- --------------------------------------------------------
 
@@ -152,13 +157,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `anggaran`
 --
 ALTER TABLE `anggaran`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
