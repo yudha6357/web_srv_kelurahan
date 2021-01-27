@@ -20,6 +20,15 @@ class Transaksi_model extends CI_Model
 		$this->db->update($table, $data);
 	}
 
+	function searchKode($data)
+	{
+		$this->db->select('kode');
+		$this->db->from('anggaran');
+		$this->db->where('kegiatan', $data);
+		return $this->db->get();
+
+	}
+
 	function delete($id)
 	{
 		$this->db->delete('transaksi', array('id' => $id));

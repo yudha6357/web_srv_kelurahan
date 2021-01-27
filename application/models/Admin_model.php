@@ -27,8 +27,7 @@ class Admin_model extends CI_Model
 
 	function anggaran_bulan_rekap($data)
 	{
-		print_r($data);
-		die;
+	
 
 		// $array = array('year(created_at)' => $year, 'bulan_realisasi like' => '%'.$month.'%');
 		$this->db->select_sum('anggaran');
@@ -76,6 +75,17 @@ class Admin_model extends CI_Model
 		return $array;
 	}
 
+	function pengeluaran_tahunan_api()
+	{
+		$year = date('Y');
+
+		$this->db->select_sum('pengeluaran');
+		$this->db->from('transaksi');
+		$this->db->where('year(created_at)', $year);
+		return $this->db->get()->result();
+	}
+
+
 	function sisa_tahunan()
 	{
 		$query = [
@@ -105,6 +115,16 @@ class Admin_model extends CI_Model
 		}
 
 		return $array;
+	}
+
+	function sisa_tahunan_api()
+	{
+		$year = date('Y');
+
+		$this->db->select_sum('anggaran');
+		$this->db->from('anggaran');
+		$this->db->where('year(created_at)', $year);
+		return $this->db->get()->result();
 	}
 
 	function monthstr($month)
