@@ -35,7 +35,7 @@ class Api extends REST_Controller {
     $kode 				= $this->input->post('kode');
 		$kegiatan			= $this->input->post('kegiatan');
 		$pengeluaran	= $this->input->post('pengeluaran');
-
+		
 		$data = array(
 			'kode'				=> $kode,
 			'kegiatan'		=> $kegiatan,
@@ -67,6 +67,36 @@ class Api extends REST_Controller {
     $this->transaksi_model->update($where, $data, 'transaksi');
     $this->response(['Item created successfully.'], REST_Controller::HTTP_OK);
   }
+
+  public function login_post()
+	{
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+
+		$user = $this->db->get_where('users', ['email' => $email])->row_array();
+
+		if ($user) {
+			if (password_verify($password, $user['password'])) {
+				$data = [
+					'email' 		=> $user['email'],
+					'name' 			=> $user['name'],
+					'role_id' 	=> $user['role_id'],
+				];
+
+				$this->session->set_userdata($data);
+				if ($data['role_id'] == 2) {
+					# code...
+					echo "login sukses";
+				} else {
+					echo "admin";
+				}
+			} else {
+				echo "gagal";
+			}
+		} else {
+			echo "gagal 2";
+		}
+	}
 
 
 }
