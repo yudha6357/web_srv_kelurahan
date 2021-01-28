@@ -4,7 +4,11 @@ class Transaksi_model extends CI_Model
 
 	function get_data()
 	{
-		return $this->db->get('transaksi');
+		$this->db->select('*');
+		$this->db->from('transaksi');
+		$this->db->join('tahun', 'tahun.id = transaksi.tahun','right');
+		$data = $this->db->get();
+		return $data;
 	}
 
 	function save($data)
@@ -18,6 +22,15 @@ class Transaksi_model extends CI_Model
 		$data['created_at'] = date("Y-m-d");
 		$this->db->where($where);
 		$this->db->update($table, $data);
+	}
+
+	function searchKode($data)
+	{
+		$this->db->select('kode');
+		$this->db->from('anggaran');
+		$this->db->where('kegiatan', $data);
+		return $this->db->get();
+
 	}
 
 	function delete($id)

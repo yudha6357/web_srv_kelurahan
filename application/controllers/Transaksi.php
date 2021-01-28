@@ -9,6 +9,7 @@ class Transaksi extends CI_Controller
 		parent::__construct();
 		$this->load->model('transaksi_model');
 		$this->load->model('anggaran_model');
+		$this->load->model('tahun_model');
 	}
 
 	public function index()
@@ -16,14 +17,15 @@ class Transaksi extends CI_Controller
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 		$data['transaksi'] = $this->transaksi_model->get_data()->result();
 		$data['anggaran']	= $this->anggaran_model->get_data()->result();
+		$data['tahun_option'] = $this->tahun_model->tahun_option();
 		$this->load->view('admin/transaksi/index', $data);
 	}
 
 	public function ajax()
 	{
 
-		$kode = $this->input->post();
-		$data = $this->anggaran_model->getdata($kode);
+		$kegiatan = $this->input->post();
+		$data = $this->anggaran_model->getdata($kegiatan);
 		echo json_encode($data);
 	}
 
@@ -32,11 +34,13 @@ class Transaksi extends CI_Controller
 		$kode 				= $this->input->post('kode');
 		$kegiatan			= $this->input->post('kegiatan');
 		$pengeluaran	= $this->input->post('pengeluaran');
+		$tahun	= $this->input->post('tahun');
 
 		$data = array(
 			'kode'				=> $kode,
 			'kegiatan'		=> $kegiatan,
 			'pengeluaran'	=> $pengeluaran,
+			'tahun'				=> $tahun,
 		);
 
 		$this->transaksi_model->save($data);

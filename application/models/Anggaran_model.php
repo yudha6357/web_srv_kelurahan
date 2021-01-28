@@ -4,7 +4,11 @@ class Anggaran_model extends CI_Model
 
 	function get_data()
 	{
-		return $this->db->get('anggaran');
+		$this->db->select('*');
+		$this->db->from('anggaran'); 
+		$this->db->join('tahun', 'tahun.id = anggaran.tahun','right');
+		$data = $this->db->get();
+		return $data;
 	}
 
 	function save($data)
@@ -26,13 +30,13 @@ class Anggaran_model extends CI_Model
 		return;
 	}
 
-	function getdata($kode = array())
+	function getdata($kegiatan = array())
 	{
 		$response = array();
-		if (isset($kode['kode'])) {
+		if (isset($kegiatan['kegiatan'])) {
 
 			$this->db->select('*');
-			$this->db->where('kode', $kode['kode']);
+			$this->db->where('kegiatan', $kegiatan['kegiatan']);
 			$record = $this->db->get('anggaran');
 			$response = $record->result();
 		}
@@ -40,7 +44,5 @@ class Anggaran_model extends CI_Model
 		// print_r($kode);
 		// die;
 		return $response;
-		// 	$this->db->get_where('anggaran', array('kode =' => $kode))->result();
-		// return;
 	}
 }

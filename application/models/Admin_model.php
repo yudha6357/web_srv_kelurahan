@@ -20,20 +20,19 @@ class Admin_model extends CI_Model
 		$year = date('Y');
 		$array = array('year(created_at)' => $year, 'bulan_realisasi like' => '%'.$month.'%');
 		$this->db->select_sum('anggaran');
-		$this->db->from('anggaran');
+		$this->db->from('anggaran');	
 		$this->db->where($array);
 		return $this->db->get();
 	}
 
 	function anggaran_bulan_rekap($data)
 	{
-		print_r($data);
-		die;
+	
 
 		// $array = array('year(created_at)' => $year, 'bulan_realisasi like' => '%'.$month.'%');
 		$this->db->select_sum('anggaran');
 		$this->db->from('anggaran');
-		// $this->db->where($array);
+		$this->db->where('tahun',1);
 		return $this->db->get();
 	}
 
@@ -45,6 +44,7 @@ class Admin_model extends CI_Model
 		$this->db->from('transaksi');
 		$this->db->where('month(created_at)', $month);
 		$this->db->where('year(created_at)', $year);
+		$this->db->where('tahun',1);
 		return $this->db->get();
 	}
 
@@ -70,11 +70,24 @@ class Admin_model extends CI_Model
 			$this->db->select_sum('anggaran');
 			$this->db->from('anggaran');
 			$this->db->like('bulan_realisasi', $row);
+			$this->db->where('tahun',1);
 			$anggaran = $this->db->get()->result();
 			$array[] = $anggaran[0]->anggaran;
 		}
 		return $array;
 	}
+
+	function pengeluaran_tahunan_api()
+	{
+		$year = date('Y');
+
+		$this->db->select_sum('pengeluaran');
+		$this->db->from('transaksi');
+		$this->db->where('year(created_at)', $year);
+		$this->db->where('tahun',1);
+		return $this->db->get()->result();
+	}
+
 
 	function sisa_tahunan()
 	{
@@ -100,11 +113,23 @@ class Admin_model extends CI_Model
 			$this->db->select_sum('pengeluaran');
 			$this->db->from('transaksi');
 			$this->db->where('month(created_at)', $row);
+			$this->db->where('tahun',1);
 			$sisa = $this->db->get()->result();
 			$array[] = $sisa[0]->pengeluaran;
 		}
 
 		return $array;
+	}
+
+	function sisa_tahunan_api()
+	{
+		$year = date('Y');
+
+		$this->db->select_sum('anggaran');
+		$this->db->from('anggaran');
+		$this->db->where('year(created_at)', $year);
+		$this->db->where('tahun',1);
+		return $this->db->get()->result();
 	}
 
 	function monthstr($month)

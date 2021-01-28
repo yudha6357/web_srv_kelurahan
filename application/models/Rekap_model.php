@@ -9,7 +9,7 @@ class Rekap_model extends CI_Model
 				LEFT JOIN( SELECT t.kode, SUM(t.pengeluaran)as pengeluaran 
 				from transaksi t 
 				WHERE MONTH(t.created_at) =" . $data['monthTemp'] ." AND YEAR(t.created_at) = " .$data['year'] ." GROUP BY t.kode , t.pengeluaran) as g 
-			ON g.kode = a.kode WHERE a.bulan_realisasi LIKE ".$data['month'] ." and YEAR(a.created_at) = " . $data['year'])->result();
+			ON g.kode = a.kode WHERE a.bulan_realisasi LIKE '%".$data['month']."%' and YEAR(a.created_at) = " . $data['year'])->result();
 		return $query;
 	}
 
@@ -53,7 +53,7 @@ class Rekap_model extends CI_Model
 		foreach ($query as $row) {
 			$this->db->select_sum('anggaran');
 			$this->db->from('anggaran');
-			$this->db->like('bulan_realisasi', $row);
+			$this->db->like('bulan_realisasi', '%'.$row.'%');
 			$anggaran = $this->db->get()->result();
 			$array[] = $anggaran[0]->anggaran;
 		}
@@ -83,7 +83,7 @@ class Rekap_model extends CI_Model
 			# code...
 			$this->db->select_sum('pengeluaran');
 			$this->db->from('transaksi');
-			$this->db->where('month(created_at)', $row);
+			$this->db->where('month(created_at)', '%'.$row.'%');
 			$sisa = $this->db->get()->result();
 			$array[] = $sisa[0]->pengeluaran;
 		}

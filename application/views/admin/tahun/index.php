@@ -5,11 +5,11 @@
 <?php $this->load->view("layout/admin.php") ?>
 <div class="container-fluid" id="container-wrapper">
 	<div class="d-sm-flex align-items-center justify-content-between mb-4">
-		<h1 class="h3 mb-0 text-gray-800">Data Anggaran</h1>
+		<h1 class="h3 mb-0 text-gray-800">Data Tahun</h1>
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item"><a href="./">Home</a></li>
 			<li class="breadcrumb-item">Tables</li>
-			<li class="breadcrumb-item active" aria-current="page">Data Anggaran</li>
+			<li class="breadcrumb-item active" aria-current="page">Data Tahun</li>
 		</ol>
 	</div>
 
@@ -19,7 +19,7 @@
 		<div class="col-lg-12">
 			<div class="card mb-4">
 				<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-					<h6 class="m-0 font-weight-bold text-primary">Data Anggaran</h6>
+					<h6 class="m-0 font-weight-bold text-primary">Data Tahun</h6>
 				</div>
 				<div style="padding-left: 2%;">
 					<button type="button" class="btn btn-primary" style="width:7%;" data-toggle="modal" data-target="#exampleModal">
@@ -32,36 +32,23 @@
 						<thead class="thead-light">
 							<tr>
 								<th>No.</th>
-								<th>Kode</th>
-								<th>Kegiatan</th>
-								<th>Anggaran</th>
-								<th>Volume</th>
-								<th>Bulan</th>
 								<th>Tahun</th>
+								<th>status</th>
 								<th>Action</th>
 							</tr>
 						</thead>
 
 						<tbody>
 							<?php $no = 1; ?>
-							<?php foreach ($anggaran as $item) { ?>
+							<?php foreach ($tahun as $item) { ?>
 								<tr>
 									<td><?= $no++ ?></td>
-									<td><?= $item->kode ?></td>
-									<td><?= $item->kegiatan ?></td>
-									<td><?= $item->anggaran ?></td>
-									<td><?= $item->volume ?></td>
-									<td> <?php $blnTemp = [] ?>
-										<?php foreach (json_decode($item->bulan_realisasi) as $bln) {
-											$blnTemp[] = $bln;
-										} ?>
-										<?= implode(" ", $blnTemp); ?>
-									</td>
 									<td><?= $item->tahun ?></td>
+									<td><?= $item->is_active?></td>
 									<td>
 										<div class="btn-group">
 											<a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModalEdit<?= $item->id ?>">Edit</a>
-											<a class="btn btn-danger" type="button" href="<?= base_url('anggaran/destroy/' . $item->id) ?> " onclick="return confirm('Hapus data?');">
+											<a class="btn btn-danger" type="button" href="<?= base_url('tahun/destroy/' . $item->id) ?> " onclick="return confirm('Hapus data?');">
 												Hapus
 											</a>
 										</div>
@@ -88,47 +75,21 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form action="<?= base_url('anggaran/store') ?>" method="post">
-						<div class="form-group">
-							<label for="kode">Kode</label>
-							<input type="text" name="kode" class="form-control" id="kode">
-						</div>
-						<div class="form-group">
-							<label for="kegiatan">Kegiatan</label>
-							<input type="text" name="kegiatan" class="form-control" id="kegiatan">
-						</div>
-						<div class="form-group">
-							<label for="anggaran">Anggaran</label>
-							<input type="text" name="anggaran" class="form-control" id="anggaran">
-						</div>
+					<form action="<?= base_url('tahun/store') ?>" method="post">
 						<div class="form-group">
               <label for="kode">Tahun</label>
               <select class="form-control" name="tahun" id="tahun">
 							  <option hidden><?= 'Silahkan Pilih' ?></option>
 								<?php foreach ($tahun_option as $item) { ?>
-									<option value="<?= $item->id ?>"><?= $item->tahun ?></option>
+									<option><?= $item ?></option>
                 <?php } ?>
               </select>
 						</div>
 						<div class="form-group">
-							<label for="volume">Volume</label>
-							<input type="number" min="0" max="12" class="form-control" name="volume" id="volume">
-						</div>
-						<div class="form-group">
-							<label for="bulan">Bulan</label>
-							<select class="form-control" name="bulan[]" id="targetId" multiple="multiple">
-								<option>Januari</option>
-								<option>Februari</option>
-								<option>Maret</option>
-								<option>April</option>
-								<option>Mei</option>
-								<option>Juni</option>
-								<option>Juli</option>
-								<option>Agustus</option>
-								<option>September</option>
-								<option>Oktober</option>
-								<option>November</option>
-								<option>Desember</option>
+							<label for="bulan">Status</label>
+							<select class="form-control" name="status" id="targetId">
+								<option value="1">Aktif</option>
+								<option value="0">Non Aktive</option>
 							</select>
 						</div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -139,7 +100,7 @@
 		</div>
 	</div>
 	<?php $no = 0;
-	foreach ($anggaran as $item) : $no++; ?>
+	foreach ($tahun as $item) : $no++; ?>
 
 		<div class="modal fade modalEdit" id="exampleModalEdit<?= $item->id ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
@@ -151,46 +112,23 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						<form action="<?= base_url('anggaran/update') ?>" method="post">
+						<form action="<?= base_url('tahun/update') ?>" method="post">
 							<div class="form-group">
 								<input type="text" value="<?= $item->id ?>" name="id" hidden>
-								<label for="kode">Kode</label>
-								<input type="text" value="<?= $item->kode ?>" name="kode" class="form-control" id="kode">
-							</div>
-							<div class="form-group">
-								<label for="kegiatan">Kegiatan</label>
-								<input type="text" value="<?= $item->kegiatan ?>" name="kegiatan" class="form-control" id="kegiatan">
-							</div>
-							<div class="form-group">
-								<label for="anggaran">Anggaran</label>
-								<input type="text" value="<?= $item->anggaran ?>" name="anggaran" class="form-control" id="anggaran">
-							</div>
-							<div class="form-group">
-								<label for="volume">Volume</label>
-								<input type="number" value="<?= $item->volume ?>" min="0" max="12" class="form-control" name="volume" id="volume">
-							</div>
-							<select class="form-control" name="tahun" id="tahun">
+								<label for="tahun">tahun</label>
+								<select class="form-control" name="tahun" id="tahun">
 							  <option hidden><?= 'Silahkan Pilih' ?></option>
 								<?php foreach ($tahun_option as $year) { ?>
-									<option value="<?= $year->id ?>" <?= $year->tahun , $item->tahun ? "selected" : "" ?> ><?= $year->tahun ?></option>
+									<option <?=$item->tahun , $year ? "selected": ""?> ><?= $year ?></option>
                 <?php } ?>
               </select>
+							</div>
 							<div class="form-group">
-								<label for="bulan">Bulan</label>
-								<select class="form-control" name="bulan[]" id="targetIdEdit<?= $item->id ?>" multiple="multiple">
-									<option <?= preg_match("/Januari/", $item->bulan_realisasi) ? "selected" : "" ?>>Januari</option>
-									<option <?= preg_match("/Februari/", $item->bulan_realisasi) ? "selected" : "" ?>>Februari</option>
-									<option <?= preg_match("/Maret/", $item->bulan_realisasi) ? "selected" : "" ?>>Maret</option>
-									<option <?= preg_match("/April/", $item->bulan_realisasi) ? "selected" : "" ?>>April</option>
-									<option <?= preg_match("/Mei/", $item->bulan_realisasi) ? "selected" : "" ?>>Mei</option>
-									<option <?= preg_match("/Juni/", $item->bulan_realisasi) ? "selected" : "" ?>>Juni</option>
-									<option <?= preg_match("/Juli/", $item->bulan_realisasi) ? "selected" : "" ?>>Juli</option>
-									<option <?= preg_match("/Agustus/", $item->bulan_realisasi) ? "selected" : "" ?>>Agustus</option>
-									<option <?= preg_match("/September/", $item->bulan_realisasi) ? "selected" : "" ?>>September</option>
-									<option <?= preg_match("/Oktober/", $item->bulan_realisasi) ? "selected" : "" ?>>Oktober</option>
-									<option <?= preg_match("/November/", $item->bulan_realisasi) ? "selected" : "" ?>>November</option>
-									<option <?= preg_match("/Desember/", $item->bulan_realisasi) ? "selected" : "" ?>>Desember</option>
-								</select>
+								<label for="status">Kegiatan</label>
+								<select class="form-control" name="status" id="targetId">
+								<option value="1" <?=$item->is_active, 1 ? "selected": ""?>>Aktif</option>
+								<option value="0" <?=$item->is_active, 0 ? "selected": ""?> >Non Aktive</option>
+							</select>
 							</div>
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 							<button type="submit" class="btn btn-primary">Save changes</button>
@@ -218,7 +156,7 @@
 		})
 
 		<?php $no = 0;
-		foreach ($anggaran as $item) : $no++; ?>
+		foreach ($tahun as $item) : $no++; ?>
 			$('#targetIdEdit<?= $item->id ?>').select2({
 				width: '100%',
 				dropdownParent: $("#exampleModalEdit<?= $item->id ?>")
@@ -233,7 +171,7 @@
 		 if (volume != bulan.length ) {	 
 			event.preventDefault();
 			alert("Jumlah bulan dan volume tidak sesuai")
-		 }
+		 }  
 
 		});
 

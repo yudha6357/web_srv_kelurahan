@@ -28,6 +28,8 @@ class Admin extends CI_Controller
 			$month = month($monthTemp[0]->bulan);
 			// $month = date('m');
 			$anggaranBulanTemp = $this->admin_model->anggaran_bulan($month)->result();
+			// print_r($anggaranBulanTemp);
+			// die();
 			$pengeluaranBulanTemp = $this->admin_model->pengeluaran_bulan($monthTemp[0]->bulan)->result();
 			$data['anggaran_bulan'] = $anggaranBulanTemp[0]->anggaran;
 			$data['pengeluaran_bulan'] = $pengeluaranBulanTemp[0]->pengeluaran;
@@ -35,8 +37,6 @@ class Admin extends CI_Controller
 			$data['anggaran_tahunan'] = $this->admin_model->anggaran_tahunan();
 			$data['sisa_tahunan'] = $this->admin_model->sisa_tahunan();
 		}
-		// print_r($data['sisa_tahunan']);
-		// die();
 
 		$this->load->view('admin/home/index', $data);
 	}

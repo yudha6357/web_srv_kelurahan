@@ -83,20 +83,29 @@
 					<form action="<?= base_url('transaksi/store') ?>" method="post">
 						<div class="form-group">
 							<label for="bulan">Kode</label>
-							<select class="form-control" name="kode" id="kode" onchange="autofill()">
+							<select class="form-control" name="kegiatan" id="kegiatan" onchange="autofill()">
 								<option hidden><?= 'Silahkan Pilih' ?></option>
 								<?php foreach ($anggaran as $item) { ?>
-									<option><?= $item->kode ?></option>
+									<option><?= $item->kegiatan ?></option>
 								<?php } ?>
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="kegiatan">Kegiatan</label>
-							<input type="text" name="kegiatan" class="form-control" id="kegiatan">
+							<label for="kegiatan">Kode</label>
+							<input type="text" name="kode" class="form-control" id="kode">
 						</div>
 						<div class="form-group">
 							<label for="anggaran">Pengeluaran</label>
 							<input type="text" name="pengeluaran" class="form-control" id="pengeluaran">
+						</div>
+						<div class="form-group">
+              <label for="kode">Tahun</label>
+              <select class="form-control" name="tahun" id="tahun">
+							  <option hidden><?= 'Silahkan Pilih' ?></option>
+								<?php foreach ($tahun_option as $item) { ?>
+									<option value="<?= $item->id ?>"><?= $item->tahun ?></option>
+                <?php } ?>
+              </select>
 						</div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Save changes</button>
@@ -155,18 +164,18 @@
 	});
 
 	function autofill() {
-		var kode = $("#kode").val();
+		var kegiatan = $("#kegiatan").val();
 		$.ajax({
 			url: '<?= base_url('Transaksi/ajax') ?>',
 			data: {
-				kode: kode
+				kegiatan: kegiatan
 			},
 			type: "POST",
 			dataType: 'json',
 			success: (function(response) {
 				console.log(response);
 				response.forEach(function(item) {
-					$('#kegiatan').val(item.kegiatan);
+					$('#kode').val(item.kode);
 				});
 			})
 		});

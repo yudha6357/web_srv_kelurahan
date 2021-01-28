@@ -34,5 +34,18 @@
 			<span>Rekap Data</span>
 		</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap" aria-expanded="true" aria-controls="collapseBootstrap">
+			<i class="far fa-fw fa-window-maximize"></i>
+			<span>Setting</span>
+		</a>
+		<div id="collapseBootstrap" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+			<div class="bg-white py-2 collapse-inner rounded">
+				<h6 class="collapse-header">Setting</h6>
+				<a class="collapse-item" href="<?= base_url('tahun/index'); ?>">Tahun</a>
+				<a class="collapse-item" href="<?= base_url('transaksi'); ?>">Transaksi</a>
+			</div>
+		</div>
+	</li>
 	<hr class="sidebar-divider">
 </ul>

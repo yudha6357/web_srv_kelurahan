@@ -8,12 +8,16 @@ class Anggaran extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('anggaran_model');
+		$this->load->model('tahun_model');
 	}
 
 	public function index()
 	{
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 		$data['anggaran'] = $this->anggaran_model->get_data()->result();
+		$data['tahun_option'] = $this->tahun_model->get_tahun()->result();
+		// print_r($data['tahun_option']);
+		// die;
 		$this->load->view('admin/anggaran/index', $data);
 	}
 
@@ -24,12 +28,14 @@ class Anggaran extends CI_Controller
 		$anggaran			= $this->input->post('anggaran');
 		$volume				= $this->input->post('volume');
 		$bulan				= $this->input->post('bulan');
+		$tahun				= $this->input->post('tahun');
 
 		$data = array(
 			'kode'								=> $kode,
 			'kegiatan'						=> $kegiatan,
 			'anggaran'						=> $anggaran,
 			'volume'							=> $volume,
+			'tahun'							=> $tahun,
 			'bulan_realisasi'			=> json_encode($bulan),
 		);
 
