@@ -3,13 +3,13 @@
 <?php $this->load->view("layout/admin.php") ?>
 <div class="container-fluid" id="container-wrapper">
 	<div class="d-sm-flex align-items-center justify-content-between mb-4">
-		<h1 class="h3 mb-0 text-gray-800">Data Anggaran</h1>
+		<h1 class="h3 mb-0 text-gray-800">Data Transaksi</h1>
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item">
-				<aanggaran copy href="./">Home</aanggaran>
+				<a copy href="./">Home</a>
 			</li>
 			<li class="breadcrumb-item">Tables</li>
-			<li class="breadcrumb-item active" aria-current="page">Data Anggaran</li>
+			<li class="breadcrumb-item active" aria-current="page">Data Transaksi</li>
 		</ol>
 	</div>
 
@@ -48,7 +48,7 @@
 									<td><?= $item->kode ?></td>
 									<td><?= $item->kegiatan ?></td>
 									<td><?= $item->pengeluaran ?></td>
-									<td><?= date("d-m-Y", strtotime($item->created_at)) ?></td>
+									<td><?= date("d-m-Y", strtotime($item->tanggal)) ?></td>
 									<td>
 										<div class="btn-group">
 											<a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModalEdit<?= $item->id ?>">Edit</a>
@@ -82,7 +82,7 @@
 				<div class="modal-body">
 					<form action="<?= base_url('transaksi/store') ?>" method="post">
 						<div class="form-group">
-							<label for="bulan">Kode</label>
+							<label for="bulan">Kegiatan</label>
 							<select class="form-control" name="kegiatan" id="kegiatan" onchange="autofill()">
 								<option hidden><?= 'Silahkan Pilih' ?></option>
 								<?php foreach ($anggaran as $item) { ?>
@@ -106,6 +106,10 @@
 									<option value="<?= $item->id ?>"><?= $item->tahun ?></option>
                 <?php } ?>
               </select>
+						</div>
+						<div class="form-group">
+							<label for="tanggal">Tanggal</label>
+							<input type="date" name="tanggal" class="form-control" id="tanggal">
 						</div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Save changes</button>

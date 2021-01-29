@@ -30,10 +30,8 @@ class Tahun_model extends CI_Model
 	{
 		$year = array();
         $now = date('Y', strtotime(' +1 Year'));
-        $a = date('Y');
         for ($i = 0; $i < 10; $i++) {
-            $year[$i] = $a . '/' . $now;
-            $a = $a - 1;
+            $year[$i] = $now;
             $now = $now - 1;
         }
 		return $year;

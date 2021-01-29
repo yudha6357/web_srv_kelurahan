@@ -17,7 +17,9 @@ class Transaksi extends CI_Controller
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 		$data['transaksi'] = $this->transaksi_model->get_data()->result();
 		$data['anggaran']	= $this->anggaran_model->get_data()->result();
-		$data['tahun_option'] = $this->tahun_model->tahun_option();
+		$data['tahun_option'] = $this->tahun_model->get_tahun()->result();
+		// print_r($data['transaksi']);
+		// die;
 		$this->load->view('admin/transaksi/index', $data);
 	}
 
@@ -34,13 +36,15 @@ class Transaksi extends CI_Controller
 		$kode 				= $this->input->post('kode');
 		$kegiatan			= $this->input->post('kegiatan');
 		$pengeluaran	= $this->input->post('pengeluaran');
-		$tahun	= $this->input->post('tahun');
+		$tahun				= $this->input->post('tahun');
+		$tanggal			= date("Y-m-d",strtotime($this->input->post('tanggal')));
 
 		$data = array(
 			'kode'				=> $kode,
 			'kegiatan'		=> $kegiatan,
 			'pengeluaran'	=> $pengeluaran,
 			'tahun'				=> $tahun,
+			'tanggal'			=> $tanggal,
 		);
 
 		$this->transaksi_model->save($data);
@@ -73,7 +77,6 @@ class Transaksi extends CI_Controller
 	public function destroy()
 	{
 		$id = $this->uri->segment(3);
-
 		$this->transaksi_model->delete($id);
 
 		redirect('transaksi/index');

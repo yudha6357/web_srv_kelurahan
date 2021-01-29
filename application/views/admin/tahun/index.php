@@ -163,18 +163,6 @@
 			})
 		<?php endforeach  ?>
 
-
-		$("#save").click(function(event){
-		var volumeTemp = $("#volume").val();
-		var volume = parseInt(volumeTemp)
-		var bulan = $("#targetId").val();
-		 if (volume != bulan.length ) {	 
-			event.preventDefault();
-			alert("Jumlah bulan dan volume tidak sesuai")
-		 }  
-
-		});
-
 	});
 </script>
 </body>

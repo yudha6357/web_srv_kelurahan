@@ -104,8 +104,10 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 			type: "POST",
 			dataType: 'json',
 			success: (function(response) {
+				console.log(response)
 				var i = 1;
-					$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/pdf/?id='+response.month+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>PDF</a>');
+					$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/pdf/?id='+response.monthTemp+'&bulan='+response.month+'&tahun='+response.year+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>PDF</a>');
+					$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/excel/?id='+response.monthTemp+'&bulan='+response.month+'&tahun='+response.year+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>Excel</a>');
 
 				response.rekap.forEach(function(element) {
 					$('#data').append('<tr><td>'+i+'.</td><td>'+element.kegiatan+'</td><td>Rp. '+element.anggaran+',-</td><td>Rp. '+element.pengeluaran+',-</td><td>Rp. '+element.sisa+',-</td></tr>');

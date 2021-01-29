@@ -18,11 +18,8 @@ class Admin_model extends CI_Model
 	function anggaran_bulan($month)
 	{
 		$year = date('Y');
-		$array = array('year(created_at)' => $year, 'bulan_realisasi like' => '%'.$month.'%');
-		$this->db->select_sum('anggaran');
-		$this->db->from('anggaran');	
-		$this->db->where($array);
-		return $this->db->get();
+		$query = $this->db->query("SELECT sum(t.anggaran) as anggaran from (SELECT a.anggaran, a.bulan_realisasi,ta.tahun FROM `anggaran` a RIGHT join tahun ta on a.tahun = ta.id) t WHERE t.bulan_realisasi LIKE '%".$month."%' AND t.tahun = ".$year)->result();
+	return $query;
 	}
 
 	function anggaran_bulan_rekap($data)
@@ -40,16 +37,15 @@ class Admin_model extends CI_Model
 	{
 		$year = date('Y');
 
-		$this->db->select_sum('pengeluaran');
-		$this->db->from('transaksi');
-		$this->db->where('month(created_at)', $month);
-		$this->db->where('year(created_at)', $year);
-		$this->db->where('tahun',1);
-		return $this->db->get();
+		$query = $this->db->query("SELECT SUM(tr.pengeluaran) as pengeluaran FROM `transaksi` tr RIGHT JOIN tahun ta on tr.tahun = ta.id WHERE Month(tr.tanggal) =".$month." AND Year(tr.tanggal) =".$year." AND Year(tr.tanggal) = ta.tahun")->result();
+		
+		return $query;
 	}
 
 	function anggaran_tahunan()
 	{
+		$year = date('Y');
+
 		$query = [
 			'Januari',
 			'Februari',
@@ -70,7 +66,7 @@ class Admin_model extends CI_Model
 			$this->db->select_sum('anggaran');
 			$this->db->from('anggaran');
 			$this->db->like('bulan_realisasi', $row);
-			$this->db->where('tahun',1);
+			$this->db->join('tahun', 'tahun.id = anggaran.tahun','right');
 			$anggaran = $this->db->get()->result();
 			$array[] = $anggaran[0]->anggaran;
 		}
@@ -84,38 +80,34 @@ class Admin_model extends CI_Model
 		$this->db->select_sum('pengeluaran');
 		$this->db->from('transaksi');
 		$this->db->where('year(created_at)', $year);
-		$this->db->where('tahun',1);
 		return $this->db->get()->result();
 	}
 
 
 	function sisa_tahunan()
 	{
-		$query = [
-			'01',
-			'02',
-			'03',
-			'04',
-			'05',
-			'06',
-			'07',
-			'08',
-			'09',
-			'10',
-			'11',
-			'12',
+		$bulan = [
+			'01'=>'Januari',
+			'02'=>'Februari',
+			'03'=>'Maret',
+			'04'=>'April',
+			'05'=>'Mei',
+			'06'=>'Juni',
+			'07'=>'Juli',
+			'08'=>'Agustus',
+			'09'=>'September',
+			'10'=>'Oktober',
+			'11'=>'November',
+			'12'=>'Desember',
 
 		];
+	
 		$array = array();
 
-		foreach ($query as $row) {
-			# code...
-			$this->db->select_sum('pengeluaran');
-			$this->db->from('transaksi');
-			$this->db->where('month(created_at)', $row);
-			$this->db->where('tahun',1);
-			$sisa = $this->db->get()->result();
-			$array[] = $sisa[0]->pengeluaran;
+		foreach ($bulan as $i => $row) {
+			$query = $this->db->query("SELECT SUM(anggaran-pengeluaran) as pengeluaran FROM (SELECT tr.pengeluaran ,tr.tahun FROM `transaksi` tr RIGHT JOIN tahun ta on tr.tahun = ta.id WHERE Month(tr.tanggal) = ".$i.") t RIGHT JOIN anggaran a on a.bulan_realisasi LIKE '%".$row."%' WHERE a.tahun = t.tahun")->result();
+			$array[] = $query[0]->pengeluaran;
+		
 		}
 
 		return $array;
@@ -176,5 +168,39 @@ class Admin_model extends CI_Model
 		}
 
 		return $data;
+	}
+
+	private function month_id(){
+		$number = [
+			'01',
+			'02',
+			'03',
+			'04',
+			'05',
+			'06',
+			'07',
+			'08',
+			'09',
+			'10',
+			'11',
+			'12',
+
+		];
+
+		$text = [
+			'Januari',
+			'Februari',
+			'Maret',
+			'April',
+			'Mei',
+			'Juni',
+			'Juli',
+			'Agustus',
+			'September',
+			'Oktober',
+			'November',
+			'Desember',
+
+		];
 	}
 }

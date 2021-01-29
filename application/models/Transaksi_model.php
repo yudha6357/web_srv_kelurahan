@@ -4,7 +4,7 @@ class Transaksi_model extends CI_Model
 
 	function get_data()
 	{
-		$this->db->select('*');
+		$this->db->select('transaksi.id,transaksi.kode,transaksi.kegiatan,transaksi.pengeluaran,transaksi.tanggal,tahun.tahun,');
 		$this->db->from('transaksi');
 		$this->db->join('tahun', 'tahun.id = transaksi.tahun','right');
 		$data = $this->db->get();
