@@ -33,20 +33,21 @@ class Api extends REST_Controller {
 
   public function transaksi_post()
   {
-<<<<<<< HEAD
-    $kode 				= $this->input->post('kode');
-		$kegiatan			= $this->input->post('kegiatan');
-		$pengeluaran	= $this->input->post('pengeluaran');
+// <<<<<<< HEAD
+//     $kode 				= $this->input->post('kode');
+// 		$kegiatan			= $this->input->post('kegiatan');
+// 		$pengeluaran	= $this->input->post('pengeluaran');
 		
-=======
+// =======
 		$raw = json_decode($this->input->raw_input_stream, true);
 		if (!$raw) {
 			$raw = [];
 		}
-		// print_r(gettype($raw));
+		// print_r ($raw);
 		// die;
 		$kegiatan			= array_key_exists('kegiatan', $raw) ? $raw['kegiatan'] : $this->input->post('kegiatan');
 		$pengeluaran	= array_key_exists('pengeluaran', $raw) ? $raw['pengeluaran'] : $this->input->post('pengeluaran');
+		$tanggal	= array_key_exists('tanggal', $raw) ? $raw['tanggal'] : $this->input->post('tanggal');
 		
 		// print_r(gettype($kegiatan));
 		// die;
@@ -56,11 +57,12 @@ class Api extends REST_Controller {
 
 		$kode = $this->transaksi_model->searchKode($kegiatan)->result();
 
->>>>>>> a12499eea63c85a8225aa7728a3ed082435c83bd
+// >>>>>>> a12499eea63c85a8225aa7728a3ed082435c83bd
 		$data = array(
 			'kode'				=> $kode[0]->kode,
 			'kegiatan'		=> $kegiatan,
 			'pengeluaran'	=> $pengeluaran,
+			'tanggal'	=> $tanggal,
 		);
 
 		$this->transaksi_model->save($data);
@@ -89,38 +91,38 @@ class Api extends REST_Controller {
     $this->response(['Item created successfully.'], REST_Controller::HTTP_OK);
   }
 
-<<<<<<< HEAD
-  public function login_post()
-	{
-		$email = $this->input->post('email');
-		$password = $this->input->post('password');
+// <<<<<<< HEAD
+//   public function login_post()
+// 	{
+// 		$email = $this->input->post('email');
+// 		$password = $this->input->post('password');
 
-		$user = $this->db->get_where('users', ['email' => $email])->row_array();
+// 		$user = $this->db->get_where('users', ['email' => $email])->row_array();
 
-		if ($user) {
-			if (password_verify($password, $user['password'])) {
-				$data = [
-					'email' 		=> $user['email'],
-					'name' 			=> $user['name'],
-					'role_id' 	=> $user['role_id'],
-				];
+// 		if ($user) {
+// 			if (password_verify($password, $user['password'])) {
+// 				$data = [
+// 					'email' 		=> $user['email'],
+// 					'name' 			=> $user['name'],
+// 					'role_id' 	=> $user['role_id'],
+// 				];
 
-				$this->session->set_userdata($data);
-				if ($data['role_id'] == 2) {
-					# code...
-					echo "login sukses";
-				} else {
-					echo "admin";
-				}
-			} else {
-				echo "gagal";
-			}
-		} else {
-			echo "gagal 2";
-		}
-	}
+// 				$this->session->set_userdata($data);
+// 				if ($data['role_id'] == 2) {
+// 					# code...
+// 					echo "login sukses";
+// 				} else {
+// 					echo "admin";
+// 				}
+// 			} else {
+// 				echo "gagal";
+// 			}
+// 		} else {
+// 			echo "gagal 2";
+// 		}
+// 	}
 
-=======
+// =======
   public function dashboard_get(){
 
     $monthTemp = $this->admin_model->get_month()->result();
@@ -161,7 +163,7 @@ class Api extends REST_Controller {
     
     $this->response($data, REST_Controller::HTTP_OK);
   }
->>>>>>> a12499eea63c85a8225aa7728a3ed082435c83bd
+// >>>>>>> a12499eea63c85a8225aa7728a3ed082435c83bd
 
   public function login_post()
 	{
