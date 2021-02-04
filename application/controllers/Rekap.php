@@ -84,14 +84,15 @@ class Rekap extends CI_Controller
 	
 	public function excel()
 	{
+		ob_start();
 		$parm['monthTemp'] = $this->input->get('id');
 		$parm['month'] = $this->input->get('bulan');
 		$parm['year'] = $this->input->get('tahun');
 		
-		// print_r($parm);
-		// die;
 		
 		$data['hasil'] = $this->rekap_model->rekap($parm);
+		// print_r($data['hasil']);
+		// die;
 
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
@@ -151,7 +152,7 @@ class Rekap extends CI_Controller
 
 		$writer->save('php://output');
 
-
+				
 	}
 
 }
