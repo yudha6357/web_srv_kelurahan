@@ -125,7 +125,10 @@ class Api extends REST_Controller {
 // =======
   public function dashboard_get(){
 
-    $monthTemp = $this->admin_model->get_month()->result();
+		$monthTemp = $this->admin_model->get_month()->result();
+		// print_r ($monthTemp);
+		// die;
+
     if (count($monthTemp) < 1){
 			$data['anggaran_bulan'] = 0;
 			$data['pengeluaran_bulan'] = 0;
@@ -135,8 +138,8 @@ class Api extends REST_Controller {
 		}else{
 			$month = month($monthTemp[0]->bulan);
 			// $month = date('m');
-			$anggaranBulanTemp = $this->admin_model->anggaran_bulan($month)->result();
-			$pengeluaranBulanTemp = $this->admin_model->pengeluaran_bulan($monthTemp[0]->bulan)->result();
+			$anggaranBulanTemp = $this->admin_model->anggaran_bulan($month);
+			$pengeluaranBulanTemp = $this->admin_model->pengeluaran_bulan($monthTemp[0]->bulan);
 			$pengeluaranTahunanTemp = $this->admin_model->pengeluaran_tahunan_api();
       $jumlahTahunanTemp = $this->admin_model->sisa_tahunan_api();
       

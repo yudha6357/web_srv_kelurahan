@@ -6,13 +6,12 @@ class Admin_model extends CI_Model
 	{
 		$month = date('m');
 		$year = date('Y');
-		// print_r($b);
-		// die();
-		$this->db->select('month(created_at) as bulan');
+		$this->db->select('month(tanggal) as bulan');
 		$this->db->from('transaksi');
-		$this->db->where('month(created_at)', $month);
-		$this->db->where('year(created_at)', $year);
+		$this->db->where('month(tanggal)', $month);
+		$this->db->where('year(tanggal)', $year);
 		return $this->db->get();
+
 	}
 
 	function anggaran_bulan($month)

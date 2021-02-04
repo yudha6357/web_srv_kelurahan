@@ -62,14 +62,15 @@ class Rekap extends CI_Controller
 	
 	public function excel()
 	{
+		ob_start();
 		$parm['monthTemp'] = $this->input->get('id');
 		$parm['month'] = $this->input->get('bulan');
 		$parm['year'] = $this->input->get('tahun');
 		
-		// print_r($parm);
-		// die;
 		
 		$data['hasil'] = $this->rekap_model->rekap($parm);
+		// print_r($data['hasil']);
+		// die;
 
 		require(APPPATH.'PHPExcel-1.8/Classes/PHPExcel.php');
 		require(APPPATH.'PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php');
@@ -83,34 +84,46 @@ class Rekap extends CI_Controller
 		$object->setActiveSheetIndex(0);
 
 		$object->getActiveSheet()->setCellValue('A1','NO');
-		$object->getActiveSheet()->setCellValue('A1','Kode');
-		$object->getActiveSheet()->setCellValue('A1','Kegiatan');
-		$object->getActiveSheet()->setCellValue('A1','Transaksi');
-		$object->getActiveSheet()->setCellValue('A1','Tidak Terealisasi');
+		$object->getActiveSheet()->setCellValue('B1','Kode');
+		$object->getActiveSheet()->setCellValue('C1','Kegiatan');
+		$object->getActiveSheet()->setCellValue('D1','Transaksi');
+		$object->getActiveSheet()->setCellValue('E1','Tidak Terealisasi');
 
 		$baris = 2;
 		$no =1;
-
+		// print_r('ok0a');
+		// die;
 		foreach ($data['hasil'] as $item) {
-			$object->getActiveSheet()->setCellValue('A'.$baris, $no++);
-			$object->getActiveSheet()->setCellValue('A'.$baris,  $item->kegiatan);
-			$object->getActiveSheet()->setCellValue('A'.$baris, $item->anggaran);
-			$object->getActiveSheet()->setCellValue('A'.$baris, $item->pengeluaran);
-			$object->getActiveSheet()->setCellValue('A'.$baris, $item->sisa);
+			$object->getActiveSheet()->setCellValue('A'.$baris, strval($no++));
+			$object->getActiveSheet()->setCellValue('B'.$baris, $item->kegiatan);
+			$object->getActiveSheet()->setCellValue('C'.$baris, $item->anggaran);
+			$object->getActiveSheet()->setCellValue('D'.$baris, $item->pengeluaran);
+			$object->getActiveSheet()->setCellValue('E'.$baris, $item->sisa);
 
 			$baris++;
 		}
-
-		$filename = "laporan Keuangan".'xlsx';
-
+		$filename = "laporan_keuangan".'.xlsx';
+		
 		$object->getActiveSheet()->setTitle('Laporan');
+		// print_r($object);
+		// die;
 
-		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition: attachment;filename="'.$filename.'"');
-		header('Cache-Control: max-age=o');
+		header('Cache-Control: max-age=0');
 
+		// print_r('ok');
+		// die;
 		$writer = PHPExcel_IOFactory::createWriter($object,'Excel2007');
+		// print_r($writer);
+		// die;
+		ob_end_clean();
+		// $writer->save('');
 		$writer->save('php://output');
+		// file_put_contents('php://output', $object);
+		// $writer->save(getcwd().'/mailAttachment/newFile.xls');
+		// print_r('ok3');
+		// die;
 
 		exit;
 
