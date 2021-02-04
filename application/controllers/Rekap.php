@@ -1,6 +1,25 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use PhpOffice\PhpSpreadsheet\Helper\Sample;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
+use PhpOffice\PhpSpreadsheet\Worksheet\ColumnDimension;
+use PhpOffice\PhpSpreadsheet\Worksheet;
+
 class Rekap extends CI_Controller
 {
 
@@ -9,6 +28,10 @@ class Rekap extends CI_Controller
 		parent::__construct();
 		$this->load->model('rekap_model');
 		$this->load->model('admin_model');
+
+		if (!isset($_SESSION['name'],$_SESSION['email'])) {
+			redirect('auth');
+		}
 	}
 
 	public function index()
@@ -33,7 +56,6 @@ class Rekap extends CI_Controller
 		$data['anggaran_tahunan'] = $this->admin_model->anggaran_tahunan();
 		$data['sisa_tahunan'] = $this->admin_model->sisa_tahunan();
 		$data['rekap'] = $this->rekap_model->rekap($data);
-
 
 		echo json_encode($data);
 
@@ -71,48 +93,63 @@ class Rekap extends CI_Controller
 		
 		$data['hasil'] = $this->rekap_model->rekap($parm);
 
-		require(APPPATH.'PHPExcel-1.8/Classes/PHPExcel.php');
-		require(APPPATH.'PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php');
-
-		$object = new PHPExcel();
-
-		$object->getProperties()->setCreator("yudha");
-		$object->getProperties()->setLastModifiedBy("yudha");
-		$object->getProperties()->setTitle("Laporan");
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+		$sheet->setCellValue('A1', 'No');
+		$sheet->setCellValue('B1', 'Kegiatan');
+		$sheet->setCellValue('C1', 'Anggaran');
+		$sheet->setCellValue('D1', 'pengeluaran');
+		$sheet->setCellValue('E1', 'Sisa');
 		
-		$object->setActiveSheetIndex(0);
+		$slno = 1;
+		$start = 2;
 
-		$object->getActiveSheet()->setCellValue('A1','NO');
-		$object->getActiveSheet()->setCellValue('A1','Kode');
-		$object->getActiveSheet()->setCellValue('A1','Kegiatan');
-		$object->getActiveSheet()->setCellValue('A1','Transaksi');
-		$object->getActiveSheet()->setCellValue('A1','Tidak Terealisasi');
-
-		$baris = 2;
-		$no =1;
-
-		foreach ($data['hasil'] as $item) {
-			$object->getActiveSheet()->setCellValue('A'.$baris, $no++);
-			$object->getActiveSheet()->setCellValue('A'.$baris,  $item->kegiatan);
-			$object->getActiveSheet()->setCellValue('A'.$baris, $item->anggaran);
-			$object->getActiveSheet()->setCellValue('A'.$baris, $item->pengeluaran);
-			$object->getActiveSheet()->setCellValue('A'.$baris, $item->sisa);
-
-			$baris++;
+		foreach($data['hasil'] as $item){
+			$sheet->setCellValue('A'.$start, $slno);
+			$sheet->setCellValue('B'.$start, $item->kegiatan);
+			$sheet->setCellValue('C'.$start, $item->anggaran);
+			$sheet->setCellValue('D'.$start, $item->pengeluaran);
+			$sheet->setCellValue('E'.$start, $item->sisa);
+		
+		$start = $start+1;
+		$slno = $slno+1;
 		}
+		
+		
+		$styleThinBlackBorderOutline = [
+					'borders' => [
+						'allBorders' => [
+							'borderStyle' => Border::BORDER_THIN,
+							'color' => ['argb' => 'FF000000'],
+						],
+					],
+				];
+		//Font BOLD
+		$sheet->getStyle('A1:E1')->getFont()->setBold(true);		
+		$sheet->getStyle('A1:E10')->applyFromArray($styleThinBlackBorderOutline);
+		//Alignment
+		//fONT SIZE
+		$sheet->getStyle('A1:E10')->getFont()->setSize(12);
+		$sheet->getStyle('A1:E2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
-		$filename = "laporan Keuangan".'xlsx';
+		$sheet->getStyle('A2:D100')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+		//Custom width for Individual Columns
+		$sheet->getColumnDimension('A')->setWidth(4);
+		$sheet->getColumnDimension('B')->setWidth(20);
+		$sheet->getColumnDimension('C')->setWidth(15);
+		$sheet->getColumnDimension('D')->setWidth(15);
+		$sheet->getColumnDimension('E')->setWidth(15);
+		$curdate = date('d-m-Y H:i:s');
 
-		$object->getActiveSheet()->setTitle('Laporan');
+		$writer = new Xlsx($spreadsheet);
 
-		header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="'.$filename.'"');
-		header('Cache-Control: max-age=o');
+		$filename = 'Report'.$curdate;
+		ob_end_clean();
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="'. $filename .'.xlsx"'); 
+		header('Cache-Control: max-age=0');
 
-		$writer = PHPExcel_IOFactory::createWriter($object,'Excel2007');
 		$writer->save('php://output');
-
-		exit;
 
 
 	}

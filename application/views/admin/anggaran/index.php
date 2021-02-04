@@ -46,26 +46,34 @@
 							<?php $no = 1; ?>
 							<?php foreach ($anggaran as $item) { ?>
 								<tr>
-									<td><?= $no++ ?></td>
-									<td><?= $item->kode ?></td>
-									<td><?= $item->kegiatan ?></td>
-									<td><?= $item->anggaran ?></td>
-									<td><?= $item->volume ?></td>
-									<td> <?php $blnTemp = [] ?>
-										<?php foreach (json_decode($item->bulan_realisasi) as $bln) {
-											$blnTemp[] = $bln;
-										} ?>
-										<?= implode(" ", $blnTemp); ?>
-									</td>
-									<td><?= $item->tahun ?></td>
-									<td>
-										<div class="btn-group">
-											<a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModalEdit<?= $item->id ?>">Edit</a>
-											<a class="btn btn-danger" type="button" href="<?= base_url('anggaran/destroy/' . $item->id) ?> " onclick="return confirm('Hapus data?');">
-												Hapus
-											</a>
-										</div>
-									</td>
+									<?php if($item->bulan_realisasi != null 
+										&& $item->kode != null 
+										&& $item->kegiatan != null 
+										&& $item->volume != null 
+										&& $item->anggaran != null ){ ?>
+										<td><?= $no++ ?></td>
+										<td><?= $item->kode ?></td>
+										<td><?= $item->kegiatan ?></td>
+										<td><?= $item->anggaran ?></td>
+										<td><?= $item->volume ?></td>
+										<td> 
+													<?php $blnTemp = [] ?>
+														<?php foreach (json_decode($item->bulan_realisasi) as $bln) {
+															$blnTemp[] = $bln;
+														} ?>
+													<?= implode(" ", $blnTemp); ?>
+											
+										</td>
+										<td><?= $item->tahun ?></td>
+										<td>
+											<div class="btn-group">
+												<a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModalEdit<?= $item->id ?>">Edit</a>
+												<a class="btn btn-danger" type="button" href="<?= base_url('anggaran/destroy/' . $item->id) ?> " onclick="return confirm('Hapus data?');">
+													Hapus
+												</a>
+											</div>
+										</td>
+									<?php } ?>
 								</tr>
 							<?php } ?>
 
@@ -169,12 +177,15 @@
 								<label for="volume">Volume</label>
 								<input type="number" value="<?= $item->volume ?>" min="0" max="12" class="form-control" name="volume" id="volume">
 							</div>
-							<select class="form-control" name="tahun" id="tahun">
-							  <option hidden><?= 'Silahkan Pilih' ?></option>
-								<?php foreach ($tahun_option as $year) { ?>
-									<option value="<?= $year->id ?>" <?= $year->tahun , $item->tahun ? "selected" : "" ?> ><?= $year->tahun ?></option>
-                <?php } ?>
-              </select>
+							<div class="form-group">
+								<label for="kode">Tahun</label>
+								<select class="form-control" name="tahun" id="tahun">
+									<option hidden><?= 'Silahkan Pilih' ?></option>
+									<?php foreach ($tahun_option as $thn) { ?>
+										<option value="<?= $thn->id ?>" <?= $thn->id,$item->tahun ? "selected" : ""?>><?= $thn->tahun ?></option>
+									<?php } ?>
+								</select>
+							</div>
 							<div class="form-group">
 								<label for="bulan">Bulan</label>
 								<select class="form-control" name="bulan[]" id="targetIdEdit<?= $item->id ?>" multiple="multiple">

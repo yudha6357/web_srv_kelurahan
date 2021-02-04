@@ -7,8 +7,13 @@ class Admin extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->helper('session');
 		$this->load->model('admin_model');
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+
+		if (!isset($_SESSION['name'],$_SESSION['email'])) {
+			redirect('auth');
+		}
 	}
 
 	public function index()

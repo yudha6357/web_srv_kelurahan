@@ -8,7 +8,12 @@ class Anggaran extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('anggaran_model');
+		$this->load->model('transaksi_model');
 		$this->load->model('tahun_model');
+
+		if (!isset($_SESSION['name'],$_SESSION['email'])) {
+			redirect('auth');
+		}
 	}
 
 	public function index()
@@ -16,6 +21,9 @@ class Anggaran extends CI_Controller
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 		$data['anggaran'] = $this->anggaran_model->get_data()->result();
 		$data['tahun_option'] = $this->tahun_model->get_tahun()->result();
+
+		// print_r($data['anggaran']);
+		// die();
 		
 		$this->load->view('admin/anggaran/index', $data);
 	}
@@ -61,12 +69,25 @@ class Anggaran extends CI_Controller
 			'tahun'							  => $tahun,
 			'bulan_realisasi'			=> json_encode($bulan),
 		);
-
+	
 		$where = array(
 			'id' => $id
 		);
+		$temp = $this->anggaran_model->get_one($where);
+		// print_r($temp);
+		// die;
+		$temp2 = $this->transaksi_model->searchMbuh($temp[0]->kode);
+		// print_r($temp);
+		// die;
+		// $this->anggaran_model->update($where, $data, 'anggaran');
+		$this->anggaran_model->updateku('anggaran', $data, $where);
 
-		$this->anggaran_model->update($where, $data, 'anggaran');
+		foreach ($temp2->result() as $key => $value) {
+			$this->anggaran_model->updateku('transaksi', ['kode' => $kode], ['id' => $value->id]);	
+		}
+		// $this->transaksi_model->update(['kode' => '008'], ['kode' => '9999'], 'transaksi');
+		// print_r($res->result());
+		// die;
 
 		redirect('anggaran/index');
 	}

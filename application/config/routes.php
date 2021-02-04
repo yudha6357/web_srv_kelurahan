@@ -65,3 +65,4 @@ $route['admin/rekap-data/index'] = 'Rekap';
 $route['admin/rekap-data/ajax'] = 'Rekap/ajax';
 $route['admin/setting/tahun'] = 'Tahun/index';
 $route['admin/setting/store'] = 'Tahun/store';
+$route['cek'] = 'Tahun/cek';

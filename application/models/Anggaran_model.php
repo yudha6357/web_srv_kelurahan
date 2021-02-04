@@ -11,17 +11,51 @@ class Anggaran_model extends CI_Model
 		return $data;
 	}
 
+	function get_one($where)
+	{
+		$this->db->select('anggaran.id,anggaran.kode,anggaran.kegiatan,anggaran.kode,anggaran.anggaran,anggaran.volume,anggaran.bulan_realisasi,anggaran.tahun');
+		$this->db->from('anggaran');
+		$this->db->where($where);
+		$res = $this->db->get()->result();
+		return $res;
+	}
+
 	function save($data)
 	{
 		$data['created_at'] = date("Y-m-d");
 		$this->db->insert('anggaran', $data);
 	}
 
-	function update($where, $data, $table)
+	function update($where, $data, $table=null, $table2=null)
 	{
+		$this->db->select('kode');
+		$this->db->from('anggaran');
+		$this->db->where($where);
+		$Temp = $this->db->get()->result();
 		$data['created_at'] = date("Y-m-d");
+		$kode = $Temp['kode'];
+
 		$this->db->where($where);
 		$this->db->update($table, $data);
+
+		// $this->db->query("UPDATE `transaksi` SET `kode`= '".$data['kode']."' WHERE `kode` = '".$kode."'");
+		// $this->db->last_query();
+
+		$this->db->set('kode',$data['kode']);
+		$this->db->where('kode',$kode);
+		$this->db->update('transaksi');
+
+
+		return;
+	}
+
+	function updateku($table = '', $data = NULL, $where = NULL, $limit = NULL) {
+		$this->db->where($where);
+		return $this->db->update($table, $data);
+		// $this->db->where($where);
+		// $this->db->from($table);
+		// $res = $this->db->get();
+		// return $res; 
 	}
 
 	function delete($id)

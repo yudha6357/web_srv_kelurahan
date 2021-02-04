@@ -10,6 +10,10 @@ class Transaksi extends CI_Controller
 		$this->load->model('transaksi_model');
 		$this->load->model('anggaran_model');
 		$this->load->model('tahun_model');
+
+		if (!isset($_SESSION['name'],$_SESSION['email'])) {
+			redirect('auth');
+		}
 	}
 
 	public function index()

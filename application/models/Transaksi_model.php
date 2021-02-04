@@ -33,6 +33,15 @@ class Transaksi_model extends CI_Model
 
 	}
 
+	function searchMbuh($kode)
+	{
+		$this->db->select('id, kode');
+		$this->db->from('transaksi');
+		$this->db->where('kode', $kode);
+		return $this->db->get();
+
+	}
+
 	function delete($id)
 	{
 		$this->db->delete('transaksi', array('id' => $id));
