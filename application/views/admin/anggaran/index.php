@@ -7,7 +7,7 @@
 	<div class="d-sm-flex align-items-center justify-content-between mb-4">
 		<h1 class="h3 mb-0 text-gray-800">Data Anggaran</h1>
 		<ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="./">Home</a></li>
+			<li class="breadcrumb-item"><a href="/">Home</a></li>
 			<li class="breadcrumb-item">Tables</li>
 			<li class="breadcrumb-item active" aria-current="page">Data Anggaran</li>
 		</ol>
@@ -18,13 +18,18 @@
 		<!-- Datatables -->
 		<div class="col-lg-12">
 			<div class="card mb-4">
+				<?php foreach ($errors as $key => $value) { ?>
+					<div class="alert alert-danger" role="alert"><?= $value ?></div>
+				<?php }?>
 				<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 					<h6 class="m-0 font-weight-bold text-primary">Data Anggaran</h6>
 				</div>
 				<div style="padding-left: 2%;">
+					<?php if ($user['role_id'] == 1) { ?>
 					<button type="button" class="btn btn-primary" style="width:7%;" data-toggle="modal" data-target="#exampleModal">
 						Add
 					</button>
+					<?php } ?>
 				</div>
 
 				<div class="table-responsive p-3">
@@ -34,11 +39,13 @@
 								<th>No.</th>
 								<th>Kode</th>
 								<th>Kegiatan</th>
-								<th>Anggaran</th>
+								<th>Anggaran Per Bulan</th>
 								<th>Volume</th>
 								<th>Bulan</th>
 								<th>Tahun</th>
+								<?php if ($user['role_id'] == 1) { ?>
 								<th>Action</th>
+								<?php } ?>
 							</tr>
 						</thead>
 
@@ -54,17 +61,17 @@
 										<td><?= $no++ ?></td>
 										<td><?= $item->kode ?></td>
 										<td><?= $item->kegiatan ?></td>
-										<td><?= $item->anggaran ?></td>
+										<td><?= 'Rp' . number_format($item->anggaran) ?></td>
 										<td><?= $item->volume ?></td>
 										<td> 
-													<?php $blnTemp = [] ?>
-														<?php foreach (json_decode($item->bulan_realisasi) as $bln) {
-															$blnTemp[] = $bln;
-														} ?>
-													<?= implode(" ", $blnTemp); ?>
-											
+										<?php $blnTemp = [] ?>
+										<?php foreach (json_decode($item->bulan_realisasi) as $bln) {
+											$blnTemp[] = $bln;
+										} ?>
+										<?= implode(" ", $blnTemp); ?>
 										</td>
 										<td><?= $item->tahun ?></td>
+										<?php if ($user['role_id'] == 1) { ?>
 										<td>
 											<div class="btn-group">
 												<a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModalEdit<?= $item->id ?>">Edit</a>
@@ -73,6 +80,7 @@
 												</a>
 											</div>
 										</td>
+										<?php } ?>
 									<?php } ?>
 								</tr>
 							<?php } ?>
@@ -99,32 +107,32 @@
 					<form action="<?= base_url('anggaran/store') ?>" method="post">
 						<div class="form-group">
 							<label for="kode">Kode</label>
-							<input type="text" name="kode" class="form-control" id="kode">
+							<input type="text" name="kode" class="form-control" id="kode" required>
 						</div>
 						<div class="form-group">
 							<label for="kegiatan">Kegiatan</label>
-							<input type="text" name="kegiatan" class="form-control" id="kegiatan">
+							<input type="text" name="kegiatan" class="form-control" id="kegiatan" required>
 						</div>
 						<div class="form-group">
-							<label for="anggaran">Anggaran</label>
-							<input type="text" name="anggaran" class="form-control" id="anggaran">
+							<label for="anggaran">Anggaran Per Bulan</label>
+							<input type="number" name="anggaran" class="form-control" id="anggaran" required>
 						</div>
 						<div class="form-group">
-              <label for="kode">Tahun</label>
-              <select class="form-control" name="tahun" id="tahun">
-							  <option hidden><?= 'Silahkan Pilih' ?></option>
+							<label for="kode">Tahun</label>
+							<select class="form-control" name="tahun" id="tahun" required>
+								<option hidden value=""><?= 'Silahkan Pilih' ?></option>
 								<?php foreach ($tahun_option as $item) { ?>
 									<option value="<?= $item->id ?>"><?= $item->tahun ?></option>
-                <?php } ?>
-              </select>
+								<?php } ?>
+							</select>
 						</div>
 						<div class="form-group">
 							<label for="volume">Volume</label>
-							<input type="number" min="0" max="12" class="form-control" name="volume" id="volume">
+							<input type="number" min="0" max="12" class="form-control" name="volume" id="volume" required>
 						</div>
 						<div class="form-group">
 							<label for="bulan">Bulan</label>
-							<select class="form-control" name="bulan[]" id="targetId" multiple="multiple">
+							<select class="form-control" name="bulan[]" id="targetId" multiple="multiple" required>
 								<option>Januari</option>
 								<option>Februari</option>
 								<option>Maret</option>
@@ -163,32 +171,32 @@
 							<div class="form-group">
 								<input type="text" value="<?= $item->id ?>" name="id" hidden>
 								<label for="kode">Kode</label>
-								<input type="text" value="<?= $item->kode ?>" name="kode" class="form-control" id="kode">
+								<input type="text" value="<?= $item->kode ?>" name="kode" class="form-control" id="kode<?= $item->id ?>" required readonly>
 							</div>
 							<div class="form-group">
 								<label for="kegiatan">Kegiatan</label>
-								<input type="text" value="<?= $item->kegiatan ?>" name="kegiatan" class="form-control" id="kegiatan">
+								<input type="text" value="<?= $item->kegiatan ?>" name="kegiatan" class="form-control" id="kegiatan<?= $item->id ?>" required readonly>
 							</div>
 							<div class="form-group">
-								<label for="anggaran">Anggaran</label>
-								<input type="text" value="<?= $item->anggaran ?>" name="anggaran" class="form-control" id="anggaran">
+								<label for="anggaran">Anggaran Per Bulan</label>
+								<input type="number" value="<?= $item->anggaran ?>" name="anggaran" class="form-control" id="anggaran<?= $item->id ?>" required>
 							</div>
 							<div class="form-group">
 								<label for="volume">Volume</label>
-								<input type="number" value="<?= $item->volume ?>" min="0" max="12" class="form-control" name="volume" id="volume">
+								<input type="number" value="<?= $item->volume ?>" min="0" max="12" class="form-control volume" name="volume" id="volume<?= $item->id ?>" required>
 							</div>
 							<div class="form-group">
 								<label for="kode">Tahun</label>
-								<select class="form-control" name="tahun" id="tahun">
-									<option hidden><?= 'Silahkan Pilih' ?></option>
+								<select class="form-control" name="tahun" id="tahun<?= $item->id ?>" required>
+									<option hidden value=""><?= 'Silahkan Pilih' ?></option>
 									<?php foreach ($tahun_option as $thn) { ?>
-										<option value="<?= $thn->id ?>" <?= $thn->id,$item->tahun ? "selected" : ""?>><?= $thn->tahun ?></option>
+										<option value="<?= $thn->id ?>" <?= $thn->tahun == $item->tahun ? "selected" : ""?>><?= $thn->tahun ?></option>
 									<?php } ?>
 								</select>
 							</div>
 							<div class="form-group">
 								<label for="bulan">Bulan</label>
-								<select class="form-control" name="bulan[]" id="targetIdEdit<?= $item->id ?>" multiple="multiple">
+								<select class="form-control bulan" name="bulan[]" id="targetIdEdit<?= $item->id ?>" multiple="multiple" required>
 									<option <?= preg_match("/Januari/", $item->bulan_realisasi) ? "selected" : "" ?>>Januari</option>
 									<option <?= preg_match("/Februari/", $item->bulan_realisasi) ? "selected" : "" ?>>Februari</option>
 									<option <?= preg_match("/Maret/", $item->bulan_realisasi) ? "selected" : "" ?>>Maret</option>
@@ -204,7 +212,7 @@
 								</select>
 							</div>
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary">Save changes</button>
+							<button type="submit" class="btn btn-primary save-edit">Save changes</button>
 						</form>
 					</div>
 				</div>
@@ -246,6 +254,17 @@
 			alert("Jumlah bulan dan volume tidak sesuai")
 		 }
 
+		});
+
+		$(".save-edit").click(function(event) {
+			var parent = $(this).parent();
+			var volumeTemp = $($(parent).find('input.volume')[0]).val();
+			var volume = parseInt(volumeTemp)
+			var bulan = $($(parent).find('select.bulan')[0]).val();
+			if (volume != bulan.length ) {	 
+				event.preventDefault();
+				alert("Jumlah bulan dan volume tidak sesuai")
+			}
 		});
 
 	});

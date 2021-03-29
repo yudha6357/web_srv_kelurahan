@@ -27,13 +27,7 @@ class Auth extends CI_Controller
 				];
 
 				$this->session->set_userdata($data);
-				if ($data['role_id'] == 2) {
-					# code...
-					redirect('user/dashboard');
-				} else {
-					redirect('admin/dashboard');
-					# code...
-				}
+				redirect('admin/dashboard');
 			} else {
 				$this->session->set_flashdata('message', '<div class="alert alert-warning" role="alert"> Failed, Password not match</div>');
 				redirect('auth');

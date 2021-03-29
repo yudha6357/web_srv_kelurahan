@@ -36,7 +36,7 @@ CREATE TABLE `anggaran` (
   `volume` varchar(255) NOT NULL,
   `bulan_realisasi` varchar(255) NOT NULL,
   `created_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `anggaran`
@@ -58,7 +58,7 @@ INSERT INTO `anggaran` (`id`, `kode`, `kegiatan`, `anggaran`, `volume`, `bulan_r
 CREATE TABLE `role` (
   `id` int NOT NULL,
   `role` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `role`
@@ -81,7 +81,7 @@ CREATE TABLE `transaksi` (
   `pengeluaran` varchar(255) NOT NULL,
   `created_at` date DEFAULT NULL,
   `update_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `transaksi`
@@ -110,7 +110,7 @@ CREATE TABLE `users` (
   `role_id` int NOT NULL,
   `is_active` int NOT NULL,
   `create_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`

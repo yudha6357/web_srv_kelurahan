@@ -33,7 +33,7 @@
 					<div class="row no-gutters align-items-center">
 						<div class="col mr-2">
 							<div class="text-xs font-weight-bold text-uppercase mb-1">Transaksi Bulan Ini</div>
-							<div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?= number_format($pengeluaran_bulan) ?>,-</div>
+							<div class="h5 mb-0 font-weight-bold text-gray-800">Rp. <?= number_format($pengeluaran_bulan) ?>,- <br> ( <?= round($pengeluaran_bulan / $anggaran_bulan * 100, 2) ?> % )</div>
 						</div>
 						<div class="col-auto">
 							<i class="fas fa-shopping-cart fa-2x text-success"></i>
@@ -49,7 +49,7 @@
 					<div class="row no-gutters align-items-center">
 						<div class="col mr-2">
 							<div class="text-xs font-weight-bold text-uppercase mb-1">Sisa Anggaran</div>
-							<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">Rp. <?= number_format($sisa_anggaran) ?>,-</div>
+							<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">Rp. <?= number_format($sisa_anggaran) ?>,- <br>( <?= round($sisa_anggaran / $anggaran_bulan * 100, 2) ?> % )</div>
 						</div>
 						<div class="col-auto">
 							<i class="fas fa-shopping-cart fa-2x text-danger"></i>
@@ -123,9 +123,10 @@
 		data: {
 			labels: ["Terealisasi", "Tidak Terealisasi"],
 			datasets: [{
+				labels: ["Terealisasi", "Tidak Terealisasi"],
 				data: [<?= $pengeluaran_bulan ?>, <?= $sisa_anggaran ?>],
-				backgroundColor: ['#1cc88a', '#FF0000', '#36b9cc'],
-				hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+				backgroundColor: ['#1cc88a', '#FF0000'],
+				hoverBackgroundColor: ['#1cc88a', '#FF0000',],
 				hoverBorderColor: "rgba(234, 236, 244, 1)",
 			}],
 		},
@@ -140,6 +141,13 @@
 				yPadding: 15,
 				displayColors: false,
 				caretPadding: 10,
+				callbacks: {
+					label: function(tooltipItem, chart) {
+						var datasetLabel = chart.datasets[0].labels[tooltipItem.index] || '';
+						var datasetValue = chart.datasets[0].data[tooltipItem.index] || '';
+						return datasetLabel + ': Rp.' + number_format(datasetValue);
+					}
+				}
 			},
 			legend: {
 				display: false
@@ -186,13 +194,19 @@
 				"January", "February", "March", "April", "May", "June", "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 			],
 			datasets: [{
-				label: "anggaran",
+				label: "Anggaran",
 				backgroundColor: "#4e73df",
 				hoverBackgroundColor: "#2e59d9",
 				borderColor: "#4e73df",
 				data: <?= json_encode($anggaran_tahunan) ?>,
 			}, {
-				label: "Test",
+				label: "Pengeluaran",
+				backgroundColor: "#1cc88a",
+				hoverBackgroundColor: "#FF000",
+				borderColor: "#FF0000",
+				data: <?= json_encode($pengeluaran_tahunan) ?>,
+			}, {
+				label: "Sisa Anggaran",
 				backgroundColor: "#DC143C",
 				hoverBackgroundColor: "#FF000",
 				borderColor: "#FF0000",
@@ -226,7 +240,7 @@
 				yAxes: [{
 					ticks: {
 						min: 0,
-						max: 10000000,
+						max: 15000000,
 						maxTicksLimit: 15,
 						padding: 10,
 						// Include a dollar sign in the ticks
@@ -261,7 +275,7 @@
 				callbacks: {
 					label: function(tooltipItem, chart) {
 						var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-						return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+						return datasetLabel + ': Rp.' + number_format(tooltipItem.yLabel);
 					}
 				}
 			},

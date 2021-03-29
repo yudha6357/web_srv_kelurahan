@@ -18,10 +18,12 @@ class Transaksi extends CI_Controller
 
 	public function index()
 	{
+		$errors = $this->session->flashdata('errors');
 		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
 		$data['transaksi'] = $this->transaksi_model->get_data()->result();
 		$data['anggaran']	= $this->anggaran_model->get_data()->result();
 		$data['tahun_option'] = $this->tahun_model->get_tahun()->result();
+		$data['errors'] = $errors ? $errors : [];
 		// print_r($data['transaksi']);
 		// die;
 		$this->load->view('admin/transaksi/index', $data);
@@ -37,16 +39,23 @@ class Transaksi extends CI_Controller
 
 	public function store()
 	{
+		$errors = $this->transaksi_model->validate_fields_store($_POST);
+		
+		if ($errors) {
+			$this->session->set_flashdata('errors', $errors);
+			redirect('transaksi/index');
+		}
+
 		$kode 				= $this->input->post('kode');
 		$kegiatan			= $this->input->post('kegiatan');
-		$pengeluaran	= $this->input->post('pengeluaran');
+		$pengeluaran	    = $this->input->post('pengeluaran');
 		$tahun				= $this->input->post('tahun');
 		$tanggal			= date("Y-m-d",strtotime($this->input->post('tanggal')));
 
 		$data = array(
 			'kode'				=> $kode,
-			'kegiatan'		=> $kegiatan,
-			'pengeluaran'	=> $pengeluaran,
+			'kegiatan'		    => $kegiatan,
+			'pengeluaran'	    => $pengeluaran,
 			'tahun'				=> $tahun,
 			'tanggal'			=> $tanggal,
 		);
@@ -62,11 +71,13 @@ class Transaksi extends CI_Controller
 		$kode 				= $this->input->post('kode');
 		$kegiatan			= $this->input->post('kegiatan');
 		$pengeluaran	= $this->input->post('pengeluaran');
+		$tanggal	= $this->input->post('tanggal');
 
 		$data = array(
 			'kode'				=> $kode,
 			'kegiatan'		=> $kegiatan,
 			'pengeluaran'	=> $pengeluaran,
+			'tanggal'	=> $tanggal,
 		);
 
 		$where = array(
@@ -85,4 +96,12 @@ class Transaksi extends CI_Controller
 
 		redirect('transaksi/index');
 	}
+
+	public function get_by_id()
+	{
+		$id = $this->input->post('id');
+		$data = $this->anggaran_model->get_one(['id' => $id]);
+		echo json_encode($data);
+	}
+
 }

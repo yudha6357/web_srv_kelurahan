@@ -48,7 +48,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 										<option>Desember</option>
 									</select>
 							</div>
-              <button type="submit" class="btn btn-primary" id="search" onclick="search()" ><i class="fas fa-search text-grey" aria-hidden="true"></i> Search</button>
+							<button type="submit" class="btn btn-primary" id="search" onclick="search()" ><i class="fas fa-search text-grey" aria-hidden="true"></i> Search</button>
 
 						<!-- </div> -->
 						<!-- <div class="input-group-append"> -->
@@ -65,8 +65,9 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 								<th>No</th>
 								<th>Kode</th>
 								<th>Kegiatan</th>
+								<th>Anggaran</th>
 								<th>Transaksi</th>
-								<th>Tidak Terealisasi</th>
+								<th>Sisa Anggaran</th>
 							</tr>
 						</thead>
 
@@ -94,7 +95,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 		var month = $("#month").val();
 		var year = $("#year").val();
 		$('#data').empty();
-    $('#search-btn').empty();
+		$('#search-btn').empty();
 		$.ajax({
 			url: '<?= base_url('Rekap/ajax') ?>',
 			data: {
@@ -106,13 +107,13 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 			success: (function(response) {
 				console.log(response)
 				var i = 1;
-					$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/pdf/?id='+response.monthTemp+'&bulan='+response.month+'&tahun='+response.year+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>PDF</a>');
-					$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/excel/?id='+response.monthTemp+'&bulan='+response.month+'&tahun='+response.year+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>Excel</a>');
+				$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/pdf/?id='+response.monthTemp+'&bulan='+response.month+'&tahun='+response.year+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>PDF</a>');
+				$('#search-btn').append('<a class="btn btn-warning" href="<?=site_url()?>rekap/excel/?id='+response.monthTemp+'&bulan='+response.month+'&tahun='+response.year+'"><i class="fa fa-file-excel-o" aria-hidden="true"></i>Excel</a>');
 
 				response.rekap.forEach(function(element) {
-					$('#data').append('<tr><td>'+i+'.</td><td>'+element.kegiatan+'</td><td>Rp. '+element.anggaran+',-</td><td>Rp. '+element.pengeluaran+',-</td><td>Rp. '+element.sisa+',-</td></tr>');
-          i++;
-					});
+					$('#data').append('<tr><td>'+i+'.</td><td>'+element.kode+'</td><td>'+element.kegiatan+'</td><td>Rp. '+number_format(element.anggaran)+',-</td><td>Rp. '+number_format(element.pengeluaran)+',-</td><td>Rp. '+number_format(element.sisa)+',-</td></tr>');
+					i++;
+				});
 
 				$('#pieChart').append('<div class="mb-4"><div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Realisasi Dana</h6></div><div class="card-body"><div class="chart-pie pt-4"><canvas id="myPieChart"></canvas></div></div></div>');
 
@@ -125,9 +126,10 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 					data: {
 						labels: ["Terealisasi", "Tidak Terealisasi"],
 						datasets: [{
+							labels: ["Terealisasi", "Tidak Terealisasi"],
 							data: [ response.pengeluaran_bulan , response.sisa_anggaran],
-							backgroundColor: ['#1cc88a', '#FF0000', '#36b9cc'],
-							hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+							backgroundColor: ['#1cc88a', '#FF0000'],
+							hoverBackgroundColor: ['#1cc88a', '#FF0000'],
 							hoverBorderColor: "rgba(234, 236, 244, 1)",
 						}],
 					},
@@ -142,6 +144,13 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 							yPadding: 15,
 							displayColors: false,
 							caretPadding: 10,
+							callbacks: {
+								label: function(tooltipItem, chart) {
+									var datasetLabel = chart.datasets[0].labels[tooltipItem.index] || '';
+									var datasetValue = chart.datasets[0].data[tooltipItem.index] || '';
+									return datasetLabel + ': Rp.' + number_format(datasetValue);
+								}
+							}
 						},
 						legend: {
 							display: false
@@ -149,7 +158,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 						cutoutPercentage: 80,
 					},
 				});
-							function number_format(number, decimals, dec_point, thousands_sep) {
+				function number_format(number, decimals, dec_point, thousands_sep) {
 					// *     example: number_format(1234.56, 2, ',', ' ');
 					// *     return: '1 234,56'
 					number = (number + '').replace(',', '').replace(' ', '');
@@ -183,13 +192,19 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 							"January", "February", "March", "April", "May", "June", "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 						],
 						datasets: [{
-							label: "anggaran",
+							label: "Anggaran",
 							backgroundColor: "#4e73df",
 							hoverBackgroundColor: "#2e59d9",
 							borderColor: "#4e73df",
 							data:  response.anggaran_tahunan,
 						}, {
-							label: "Test",
+							label: "Pengeluaran",
+							backgroundColor: "#1cc88a",
+							hoverBackgroundColor: "#FF000",
+							borderColor: "#FF0000",
+							data: response.pengeluaran_tahunan,
+						}, {
+							label: "Sisa Anggaran",
 							backgroundColor: "#DC143C",
 							hoverBackgroundColor: "#FF000",
 							borderColor: "#FF0000",
@@ -223,7 +238,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 							yAxes: [{
 								ticks: {
 									min: 0,
-									max: 10000000,
+									max: 15000000,
 									maxTicksLimit: 15,
 									padding: 10,
 									// Include a dollar sign in the ticks
@@ -258,7 +273,7 @@ vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 							callbacks: {
 								label: function(tooltipItem, chart) {
 									var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-									return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+									return datasetLabel + ': Rp.' + number_format(tooltipItem.yLabel);
 								}
 							}
 						},

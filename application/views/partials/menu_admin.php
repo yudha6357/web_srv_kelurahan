@@ -34,6 +34,7 @@
 			<span>Rekap Data</span>
 		</a>
 	</li>
+	<?php if ($user['role_id'] == 1) { ?>
 	<li class="nav-item">
 		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap2" aria-expanded="true" aria-controls="collapseBootstrap">
 			<i class="far fa-fw fa-window-maximize"></i>
@@ -42,9 +43,11 @@
 		<div id="collapseBootstrap2" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
 			<div class="bg-white py-2 collapse-inner rounded">
 				<h6 class="collapse-header">Setting</h6>
-				<a class="collapse-item" href="<?= base_url('tahun/index'); ?>">Tahun</a>
+					<a class="collapse-item" href="<?= base_url('tahun/index'); ?>">Tahun</a>
+					<a class="collapse-item" href="<?= base_url('users/index'); ?>">Users</a>
 			</div>
 		</div>
 	</li>
+	<?php } ?>
 	<hr class="sidebar-divider">
 </ul>

@@ -54,6 +54,7 @@ class Rekap extends CI_Controller
 		$data['pengeluaran_bulan'] = $pengeluaranBulanTemp[0]->pengeluaran;
 		$data['sisa_anggaran'] = $anggaranBulanTemp[0]->anggaran - $pengeluaranBulanTemp[0]->pengeluaran;
 		$data['anggaran_tahunan'] = $this->admin_model->anggaran_tahunan();
+		$data['pengeluaran_tahunan'] = $this->admin_model->pengeluaran_tahunan();
 		$data['sisa_tahunan'] = $this->admin_model->sisa_tahunan();
 		$data['rekap'] = $this->rekap_model->rekap($data);
 
@@ -97,23 +98,25 @@ class Rekap extends CI_Controller
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
 		$sheet->setCellValue('A1', 'No');
-		$sheet->setCellValue('B1', 'Kegiatan');
-		$sheet->setCellValue('C1', 'Anggaran');
-		$sheet->setCellValue('D1', 'pengeluaran');
-		$sheet->setCellValue('E1', 'Sisa');
+		$sheet->setCellValue('B1', 'Kode');
+		$sheet->setCellValue('C1', 'Kegiatan');
+		$sheet->setCellValue('D1', 'Anggaran');
+		$sheet->setCellValue('E1', 'pengeluaran');
+		$sheet->setCellValue('F1', 'Sisa');
 		
 		$slno = 1;
 		$start = 2;
 
 		foreach($data['hasil'] as $item){
 			$sheet->setCellValue('A'.$start, $slno);
-			$sheet->setCellValue('B'.$start, $item->kegiatan);
-			$sheet->setCellValue('C'.$start, $item->anggaran);
-			$sheet->setCellValue('D'.$start, $item->pengeluaran);
-			$sheet->setCellValue('E'.$start, $item->sisa);
+			$sheet->setCellValue('B'.$start, $item->kode);
+			$sheet->setCellValue('C'.$start, $item->kegiatan);
+			$sheet->setCellValue('D'.$start, $item->anggaran);
+			$sheet->setCellValue('E'.$start, $item->pengeluaran);
+			$sheet->setCellValue('F'.$start, $item->sisa);
 		
-		$start = $start+1;
-		$slno = $slno+1;
+			$start = $start+1;
+			$slno = $slno+1;
 		}
 		
 		
@@ -126,20 +129,21 @@ class Rekap extends CI_Controller
 					],
 				];
 		//Font BOLD
-		$sheet->getStyle('A1:E1')->getFont()->setBold(true);		
-		$sheet->getStyle('A1:E10')->applyFromArray($styleThinBlackBorderOutline);
+		$sheet->getStyle('A1:F1')->getFont()->setBold(true);		
+		$sheet->getStyle('A1:F10')->applyFromArray($styleThinBlackBorderOutline);
 		//Alignment
 		//fONT SIZE
-		$sheet->getStyle('A1:E10')->getFont()->setSize(12);
-		$sheet->getStyle('A1:E2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+		$sheet->getStyle('A1:F10')->getFont()->setSize(12);
+		$sheet->getStyle('A1:F2')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
 
 		$sheet->getStyle('A2:D100')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 		//Custom width for Individual Columns
 		$sheet->getColumnDimension('A')->setWidth(4);
 		$sheet->getColumnDimension('B')->setWidth(20);
-		$sheet->getColumnDimension('C')->setWidth(15);
+		$sheet->getColumnDimension('C')->setWidth(20);
 		$sheet->getColumnDimension('D')->setWidth(15);
 		$sheet->getColumnDimension('E')->setWidth(15);
+		$sheet->getColumnDimension('F')->setWidth(15);
 		$curdate = date('d-m-Y H:i:s');
 
 		$writer = new Xlsx($spreadsheet);

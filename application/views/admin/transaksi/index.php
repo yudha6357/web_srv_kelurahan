@@ -1,3 +1,28 @@
+<?php
+function tgl_indo($tanggal){
+	$bulan = array (
+		1 =>   'Januari',
+		'Februari',
+		'Maret',
+		'April',
+		'Mei',
+		'Juni',
+		'Juli',
+		'Agustus',
+		'September',
+		'Oktober',
+		'November',
+		'Desember'
+	);
+	$pecahkan = explode('-', $tanggal);
+	
+	// variabel pecahkan 0 = tahun
+	// variabel pecahkan 1 = bulan
+	// variabel pecahkan 2 = tanggal
+ 
+	return $pecahkan[2] . ' ' . $bulan[ (int)$pecahkan[1] ] . ' ' . $pecahkan[0];
+}
+?>
 <?php $this->load->view("css/css.php") ?>
 <link href="<?= base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 <?php $this->load->view("layout/admin.php") ?>
@@ -18,8 +43,11 @@
 		<!-- Datatables -->
 		<div class="col-lg-12">
 			<div class="card mb-4">
+				<?php foreach ($errors as $key => $value) { ?>
+					<div class="alert alert-danger" role="alert"><?= $value ?></div>
+				<?php }?>
 				<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-					<h6 class="m-0 font-weight-bold text-primary">Data Anggaran</h6>
+					<h6 class="m-0 font-weight-bold text-primary">Data Transaksi</h6>
 				</div>
 				<div style="padding-left: 2%;">
 					<button type="button" class="btn btn-primary" style="width:7%;" data-toggle="modal" data-target="#exampleModal">
@@ -47,8 +75,8 @@
 									<td><?= $no++ ?></td>
 									<td><?= $item->kode ?></td>
 									<td><?= $item->kegiatan ?></td>
-									<td><?= $item->pengeluaran ?></td>
-									<td><?= date("d-m-Y", strtotime($item->tanggal)) ?></td>
+									<td><?= 'Rp'.number_format($item->pengeluaran) ?></td>
+									<td><?= tgl_indo(date("Y-m-d", strtotime($item->tanggal))) ?></td>
 									<td>
 										<div class="btn-group">
 											<a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModalEdit<?= $item->id ?>">Edit</a>
@@ -83,25 +111,25 @@
 					<form action="<?= base_url('transaksi/store') ?>" method="post">
 						<div class="form-group">
 							<label for="bulan">Kegiatan</label>
-							<select class="form-control" name="kegiatan" id="kegiatan" onchange="autofill()">
-								<option hidden><?= 'Silahkan Pilih' ?></option>
+							<select class="form-control" name="kegiatan" id="kegiatan" onchange="autofill()" required>
+								<option hidden value="">Silahkan Pilih</option>
 								<?php foreach ($anggaran as $item) { ?>
-									<option><?= $item->kegiatan ?></option>
+									<option id="<?= $item->id ?>-op-anggaran"><?= $item->kegiatan ?></option>
 								<?php } ?>
 							</select>
 						</div>
 						<div class="form-group">
 							<label for="kegiatan">Kode</label>
-							<input type="text" name="kode" class="form-control" id="kode">
+							<input type="text" name="kode" class="form-control" id="kode" required readonly>
 						</div>
 						<div class="form-group">
 							<label for="anggaran">Pengeluaran</label>
-							<input type="text" name="pengeluaran" class="form-control" id="pengeluaran">
+							<input type="number" name="pengeluaran" class="form-control" id="pengeluaran" required>
 						</div>
 						<div class="form-group">
               <label for="kode">Tahun</label>
-              <select class="form-control" name="tahun" id="tahun">
-							  <option hidden><?= 'Silahkan Pilih' ?></option>
+              <select class="form-control" name="tahun" id="tahun" required>
+							  <option hidden value="">Silahkan Pilih</option>
 								<?php foreach ($tahun_option as $item) { ?>
 									<option value="<?= $item->id ?>"><?= $item->tahun ?></option>
                 <?php } ?>
@@ -109,7 +137,7 @@
 						</div>
 						<div class="form-group">
 							<label for="tanggal">Tanggal</label>
-							<input type="date" name="tanggal" class="form-control" id="tanggal">
+							<input type="date" name="tanggal" class="form-control" id="tanggal" required>
 						</div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Save changes</button>
@@ -135,20 +163,19 @@
 							<input type="text" value="<?= $item->id ?>" name="id" hidden>
 							<div class="form-group">
 								<label for="kodeEdit">Kode</label>
-								<select class="form-control" name="kode" id="kodeEdit<?= $item->id ?>" onchange="autofillEdit(<?=$item->id?>)">
-									<option hidden><?= 'Silahkan Pilih' ?></option>
-									<?php foreach ($anggaran as $agg) { ?>
-										<option value="<?= $agg->kode ?>" <?= $agg->kode == $item->kode ? 'selected' : "" ?>><?= $agg->kode ?> </option>
-									<?php } ?>
-								</select>
+								<input type="text" readonly value="<?= $item->kode ?>" name="kode" class="form-control" id="kodeEdit<?= $item->id ?>" required>
 							</div>
 							<div class="form-group">
 								<label for="kegiatan">Kegiatan</label>
-								<input type="text" readonly value="<?= $item->kegiatan ?>" name="kegiatan" class="form-control" id="kegiatanEdit<?= $item->id ?>">
+								<input type="text" readonly value="<?= $item->kegiatan ?>" name="kegiatan" class="form-control" id="kegiatanEdit<?= $item->id ?>" required>
 							</div>
 							<div class="form-group">
 								<label for="pengeluaran">Pengeluaran</label>
-								<input type="text" value="<?= $item->pengeluaran ?>" name="pengeluaran" class="form-control" id="pengeluaran">
+								<input type="number" value="<?= $item->pengeluaran ?>" name="pengeluaran" class="form-control" id="pengeluaran" required>
+							</div>
+							<div class="form-group">
+								<label for="tanggal">Tanggal</label>
+								<input type="date" name="tanggal" class="form-control" id="tanggal" value="<?= $item->tanggal ?>" required>
 							</div>
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 							<button type="submit" class="btn btn-primary">Save changes</button>
@@ -168,17 +195,20 @@
 	});
 
 	function autofill() {
-		var kegiatan = $("#kegiatan").val();
+		// var kegiatan = $("#kegiatan").val();
+		var el_id = $('#kegiatan').children(":selected").attr("id");
+		var id = parseInt(el_id.split('-')[0])
 		$.ajax({
-			url: '<?= base_url('Transaksi/ajax') ?>',
+			url: '<?= base_url('Transaksi/get_by_id') ?>',
 			data: {
-				kegiatan: kegiatan
+				id: id
 			},
 			type: "POST",
 			dataType: 'json',
 			success: (function(response) {
 				console.log(response);
 				response.forEach(function(item) {
+					$('#kode').val(item.kode);
 					$('#kode').val(item.kode);
 				});
 			})

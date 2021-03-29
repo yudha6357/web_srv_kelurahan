@@ -12,6 +12,10 @@ class Tahun extends CI_Controller
 		if (!isset($_SESSION['name'],$_SESSION['email'])) {
 			redirect('auth');
 		}
+
+		if ($_SESSION['role_id'] != 1) {
+			redirect('admin/dashboard');
+		}
 	}
 
 	public function index()

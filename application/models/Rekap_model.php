@@ -4,7 +4,7 @@ class Rekap_model extends CI_Model
 
 	function rekap($data)
 	{
-		$query = $this->db->query("SELECT a.kegiatan, a.anggaran, IFNULL (g.pengeluaran,0) pengeluaran, IFNULL(a.anggaran-g.pengeluaran,a.anggaran) sisa 
+		$query = $this->db->query("SELECT a.kode, a.kegiatan, a.anggaran, IFNULL (g.pengeluaran,0) pengeluaran, IFNULL(a.anggaran-g.pengeluaran,a.anggaran) sisa 
 			FROM anggaran a 
 				LEFT JOIN( SELECT t.kode, SUM(t.pengeluaran)as pengeluaran 
 				from transaksi t 

@@ -18,32 +18,33 @@ class Anggaran extends CI_Controller
 
 	public function index()
 	{
-		$data['user'] = $this->db->get_where('users', ['email' => $this->session->userdata('email')])->row_array();
+		$errors = $this->session->flashdata('errors');
+		$data['user'] = $this->db->get_where('users', 
+			['email' => $this->session->userdata('email')]
+		)->row_array();
 		$data['anggaran'] = $this->anggaran_model->get_data()->result();
 		$data['tahun_option'] = $this->tahun_model->get_tahun()->result();
-
-		// print_r($data['anggaran']);
-		// die();
+		$data['errors'] = $errors ? $errors : [];
 		
 		$this->load->view('admin/anggaran/index', $data);
 	}
 
 	public function store()
 	{
-		$kode					= $this->input->post('kode');
-		$kegiatan			= $this->input->post('kegiatan');
-		$anggaran			= $this->input->post('anggaran');
-		$volume				= $this->input->post('volume');
-		$bulan				= $this->input->post('bulan');
-		$tahun				= $this->input->post('tahun');
+		$errors = $this->anggaran_model->validate_fields_store($_POST);
+		
+		if ($errors) {
+			$this->session->set_flashdata('errors', $errors);
+			redirect('anggaran/index');
+		}
 
 		$data = array(
-			'kode'								=> $kode,
-			'kegiatan'						=> $kegiatan,
-			'anggaran'						=> $anggaran,
-			'volume'							=> $volume,
-			'tahun'							  => $tahun,
-			'bulan_realisasi'			=> json_encode($bulan),
+			'kode' => $this->input->post('kode'),
+			'kegiatan' => $this->input->post('kegiatan'),
+			'anggaran' => $this->input->post('anggaran'),
+			'volume' => $this->input->post('volume'),
+			'tahun' => $this->input->post('tahun'),
+			'bulan_realisasi' => json_encode($this->input->post('bulan')),
 		);
 
 		$this->anggaran_model->save($data);
@@ -53,8 +54,10 @@ class Anggaran extends CI_Controller
 
 	public function update()
 	{
+		$errors = [];
+
 		$id					= $this->input->post('id');
-		$kode					= $this->input->post('kode');
+		$kode				= $this->input->post('kode');
 		$kegiatan			= $this->input->post('kegiatan');
 		$anggaran			= $this->input->post('anggaran');
 		$volume				= $this->input->post('volume');
@@ -73,21 +76,7 @@ class Anggaran extends CI_Controller
 		$where = array(
 			'id' => $id
 		);
-		$temp = $this->anggaran_model->get_one($where);
-		// print_r($temp);
-		// die;
-		$temp2 = $this->transaksi_model->searchMbuh($temp[0]->kode);
-		// print_r($temp);
-		// die;
-		// $this->anggaran_model->update($where, $data, 'anggaran');
-		$this->anggaran_model->updateku('anggaran', $data, $where);
-
-		foreach ($temp2->result() as $key => $value) {
-			$this->anggaran_model->updateku('transaksi', ['kode' => $kode], ['id' => $value->id]);	
-		}
-		// $this->transaksi_model->update(['kode' => '008'], ['kode' => '9999'], 'transaksi');
-		// print_r($res->result());
-		// die;
+		$this->anggaran_model->update($where, $data);
 
 		redirect('anggaran/index');
 	}
