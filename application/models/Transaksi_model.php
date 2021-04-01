@@ -22,7 +22,7 @@ class Transaksi_model extends CI_Model
 	{
 		$this->db->select('transaksi.id,transaksi.kode,transaksi.kegiatan,transaksi.pengeluaran,transaksi.tanggal,tahun.tahun,');
 		$this->db->from('transaksi');
-		$this->db->join('tahun', 'tahun.id = transaksi.tahun','right');
+		$this->db->join('tahun', 'tahun.id = transaksi.tahun','left');
 		$data = $this->db->get();
 		return $data;
 	}

@@ -168,6 +168,21 @@ class Api extends REST_Controller {
   }
 // >>>>>>> a12499eea63c85a8225aa7728a3ed082435c83bd
 
+  public function statistic_get()
+  {
+		$month = intval(date('m'));
+		$anggaranBulanTemp = $this->admin_model->anggaran_bulan(month($month));
+		$pengeluaranBulanTemp = $this->admin_model->pengeluaran_bulan($month);
+		$data['anggaran_bulan'] = intval($anggaranBulanTemp[0]->anggaran);
+		$data['pengeluaran_bulan'] = intval($pengeluaranBulanTemp[0]->pengeluaran);
+		$data['sisa_anggaran'] = intval($anggaranBulanTemp[0]->anggaran - $pengeluaranBulanTemp[0]->pengeluaran);
+		$data['anggaran_tahunan'] = $this->admin_model->anggaran_tahunan();
+		$data['pengeluaran_tahunan'] = $this->admin_model->pengeluaran_tahunan();
+		$data['sisa_tahunan'] = $this->admin_model->sisa_tahunan();
+		
+		$this->response($data, REST_Controller::HTTP_OK);
+  }
+
   public function login_post()
 	{
 		$raw = json_decode($this->input->raw_input_stream, true);

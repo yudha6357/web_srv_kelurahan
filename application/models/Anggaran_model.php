@@ -10,7 +10,7 @@ class Anggaran_model extends CI_Model
 	{
 		$this->db->select('anggaran.id,anggaran.kode,anggaran.kegiatan,anggaran.kode,anggaran.anggaran,anggaran.volume,anggaran.bulan_realisasi,tahun.tahun');
 		$this->db->from('anggaran'); 
-		$this->db->join('tahun', 'tahun.id = anggaran.tahun','right');
+		$this->db->join('tahun', 'tahun.id = anggaran.tahun','left');
 		$data = $this->db->get();
 		return $data;
 	}

@@ -68,7 +68,7 @@ class Admin_model extends CI_Model
 			$this->db->like('bulan_realisasi', $row);
 			$this->db->join('tahun', 'tahun.id = anggaran.tahun','right');
 			$anggaran = $this->db->get()->result();
-			$array[] = $anggaran[0]->anggaran;
+			$array[] = intval($anggaran[0]->anggaran);
 		}
 		return $array;
 	}
@@ -87,7 +87,7 @@ class Admin_model extends CI_Model
 			$this->db->like('MONTH(tanggal)', $row);
 			$this->db->join('tahun', 'tahun.id = transaksi.tahun','right');
 			$pengeluaran = $this->db->get()->result();
-			$array[] = $pengeluaran[0]->pengeluaran;
+			$array[] = intval($pengeluaran[0]->pengeluaran);
 		}
 		return $array;
 	}
@@ -138,7 +138,7 @@ class Admin_model extends CI_Model
 			// )->result();
 			// $array[] = $query[0]->pengeluaran;
 			if ($pengeluaran > 0 && $i <= $month) {
-				$array[] = $anggaran - $pengeluaran;
+				intval($array[] = $anggaran - $pengeluaran);
 			} else {
 				$array[] = 0;
 			}
