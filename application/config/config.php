@@ -24,7 +24,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 // $config['base_url'] = 'https://andri.anproject.web.id';
-$config['base_url'] = 'http://localhost:8001/';
+$config['base_url'] = 'https://andri.anproject.web.id/';
 
 /*
 |--------------------------------------------------------------------------
