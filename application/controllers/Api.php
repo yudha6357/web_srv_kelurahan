@@ -88,11 +88,6 @@ class Api extends REST_Controller {
 		if (!$kegiatan) {
 			return $this->response(["error" => "Kegiatan Kosong"], 400);
 		}
-		
-		if ($errors) {
-			$this->session->set_flashdata('errors', $errors);
-			redirect('transaksi/index');
-		}
 
 		// $kode = $this->transaksi_model->searchKode($kegiatan)->result();
 

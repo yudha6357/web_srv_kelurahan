@@ -96,10 +96,10 @@ class Transaksi_model extends CI_Model
 		$this->db->where('kode', $post['kode']);
 		$anggaran = $this->db->get()->result();
 
-		$bulans = json_decode($anggaran[0]->bulan_realisasi);
+		$bulans = $anggaran ? json_decode($anggaran[0]->bulan_realisasi) : [];
 
 		if (!in_array($bulan_tanggal, $bulans)) {
-			array_push($errors, 'Transaksi hanya untuk bulan berikut : ' . $anggaran[0]->bulan_realisasi);
+			array_push($errors, 'Transaksi hanya untuk bulan berikut : ' . ($anggaran ? $anggaran[0]->bulan_realisasi : '-'));
 		} else {
 			$this->db->select('id, kode');
 			$this->db->from('transaksi');

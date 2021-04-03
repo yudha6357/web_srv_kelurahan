@@ -17,7 +17,7 @@ class Admin_model extends CI_Model
 	function anggaran_bulan($month)
 	{
 		$year = date('Y');
-		$query = $this->db->query("SELECT sum(t.anggaran) as anggaran from (SELECT a.anggaran, a.bulan_realisasi,ta.tahun FROM `anggaran` a RIGHT join tahun ta on a.tahun = ta.id) t WHERE t.bulan_realisasi LIKE '%".$month."%' AND t.tahun = ".$year)->result();
+		$query = $this->db->query("SELECT sum(t.anggaran) as anggaran from (SELECT a.anggaran, a.bulan_realisasi,ta.tahun FROM `anggaran` a LEFT join tahun ta on a.tahun = ta.id) t WHERE t.bulan_realisasi LIKE '%".$month."%' AND t.tahun = ".$year)->result();
 	return $query;
 	}
 
@@ -36,7 +36,7 @@ class Admin_model extends CI_Model
 	{
 		$year = date('Y');
 
-		$query = $this->db->query("SELECT SUM(tr.pengeluaran) as pengeluaran FROM `transaksi` tr RIGHT JOIN tahun ta on tr.tahun = ta.id WHERE Month(tr.tanggal) =".$month." AND Year(tr.tanggal) =".$year." AND Year(tr.tanggal) = ta.tahun")->result();
+		$query = $this->db->query("SELECT SUM(tr.pengeluaran) as pengeluaran FROM `transaksi` tr LEFT JOIN tahun ta on tr.tahun = ta.id WHERE Month(tr.tanggal) =".$month." AND Year(tr.tanggal) =".$year)->result();
 		
 		return $query;
 	}
@@ -82,10 +82,10 @@ class Admin_model extends CI_Model
 
 		foreach ($query as $row) {
 			$this->db->select_sum('pengeluaran');
-			$this->db->where(['tahun.tahun' => $year]);
+			// $this->db->where(['tahun.tahun' => $year]);
 			$this->db->from('transaksi');
-			$this->db->like('MONTH(tanggal)', $row);
-			$this->db->join('tahun', 'tahun.id = transaksi.tahun','right');
+			$this->db->where('MONTH(tanggal)', $row);
+			$this->db->where('YEAR(tanggal)', $year);
 			$pengeluaran = $this->db->get()->result();
 			$array[] = intval($pengeluaran[0]->pengeluaran);
 		}
@@ -129,7 +129,7 @@ class Admin_model extends CI_Model
 		foreach ($bulan as $i => $row) {
 			$anggaran_query = $this->db->query("SELECT sum(a.anggaran) as anggaran FROM `anggaran` a LEFT JOIN tahun ta on a.tahun = ta.id WHERE bulan_realisasi LIKE '%".$row."%' AND ta.tahun = ".$year)->result();
 			$anggaran = $anggaran_query[0]->anggaran;
-			$pengeluaran_query = $this->db->query("SELECT sum(tr.pengeluaran) as pengeluaran FROM `transaksi` tr LEFT JOIN tahun ta on tr.tahun = ta.id WHERE Month(tr.tanggal) = ".$i." AND ta.tahun = ".$year)->result();
+			$pengeluaran_query = $this->db->query("SELECT sum(tr.pengeluaran) as pengeluaran FROM `transaksi` tr WHERE Month(tr.tanggal) = ".$i." AND YEAR(tr.tanggal) = ".$year)->result();
 			$pengeluaran = $pengeluaran_query[0]->pengeluaran;
 			// $query = $this->db->query(
 			// 	"SELECT SUM(anggaran - t.pengeluaran) as pengeluaran FROM 
