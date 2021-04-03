@@ -83,7 +83,7 @@ class Api extends REST_Controller {
 		$kegiatan = array_key_exists('kegiatan', $raw) ? $raw['kegiatan'] : $this->input->post('kegiatan');
 		$pengeluaran = array_key_exists('pengeluaran', $raw) ? $raw['pengeluaran'] : $this->input->post('pengeluaran');
 		$tanggal = array_key_exists('tanggal', $raw) ? $raw['tanggal'] : $this->input->post('tanggal');
-		$tahun = array_key_exists('tanggal', $raw) ? $raw['tanggal'] : $this->input->post('tanggal');
+		$tahun = array_key_exists('tahun', $raw) ? $raw['tahun'] : $this->input->post('tahun');
 		
 		if (!$kegiatan) {
 			return $this->response(["error" => "Kegiatan Kosong"], 400);
