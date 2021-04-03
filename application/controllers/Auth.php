@@ -37,6 +37,7 @@ class Auth extends CI_Controller
 			redirect('auth');
 		}
 	}
+	
 	public function index()
 	{
 		if (isset($_SESSION['name'],$_SESSION['email'])) {
