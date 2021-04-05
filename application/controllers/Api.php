@@ -11,12 +11,8 @@ class Api extends REST_Controller {
 		$this->load->model('transaksi_model');
 		$this->load->model('admin_model');
 		$this->load->model('tahun_model');
+		$this->load->model('rekap_model');
 	}
-
-  // public function index_get()
-  // {
-
-  // }
 
 	public function anggaran_get()
 	{
@@ -71,6 +67,44 @@ class Api extends REST_Controller {
 		return $this->response($data[0], REST_Controller::HTTP_OK);
 	}
 
+	public function anggaran_post()
+	{
+		$raw = json_decode($this->input->raw_input_stream, true);
+		
+		if (!$raw) {
+			$raw = [];
+		}
+	
+		$kode = array_key_exists('kode', $raw) ? $raw['kode'] : $this->input->post('kode');
+		$kegiatan = array_key_exists('kegiatan', $raw) ? $raw['kegiatan'] : $this->input->post('kegiatan');
+		$anggaran = array_key_exists('anggaran', $raw) ? $raw['anggaran'] : $this->input->post('anggaran');
+		$volume = array_key_exists('volume', $raw) ? $raw['volume'] : $this->input->post('volume');
+		$tahun = array_key_exists('tahun', $raw) ? $raw['tahun'] : $this->input->post('tahun');
+		$bulan_realisasi = array_key_exists('bulan_realisasi', $raw) ? $raw['bulan_realisasi'] : $this->input->post('bulan_realisasi');
+
+		$data = array(
+			'kode' => $kode,
+			'kegiatan' => $kegiatan,
+			'anggaran' => $anggaran,
+			'volume' => $volume,
+			'tahun' => $tahun,
+			'bulan' => $bulan_realisasi,
+		);
+
+		$errors = $this->anggaran_model->validate_fields_store($data);
+
+		if ($errors) {
+			return $this->response(["error" => $errors], 400);
+		}
+
+		$data['bulan_realisasi'] = json_encode($data['bulan']);
+		unset($data['bulan']);
+
+		$response = $this->anggaran_model->save($data);
+
+		return $this->response($data, REST_Controller::HTTP_OK);
+	}
+
 	public function transaksi_post()
 	{
 		$raw = json_decode($this->input->raw_input_stream, true);
@@ -89,8 +123,6 @@ class Api extends REST_Controller {
 			return $this->response(["error" => "Kegiatan Kosong"], 400);
 		}
 
-		// $kode = $this->transaksi_model->searchKode($kegiatan)->result();
-
 		$data = array(
 			'kode' => $kode,
 			'kegiatan' => $kegiatan,
@@ -105,7 +137,7 @@ class Api extends REST_Controller {
 			return $this->response(["error" => $errors], 400);
 		}
 
-		$this->transaksi_model->save($data);
+		$response = $this->transaksi_model->save($data);
   
 		return $this->response($data, REST_Controller::HTTP_OK);
 	}
@@ -204,9 +236,9 @@ class Api extends REST_Controller {
 		if ($user) {
 			if (password_verify($password, $user['password'])) {
 				$data = [
-					'email' 		=> $user['email'],
-					'name' 			=> $user['name'],
-					'role_id' 	=> $user['role_id'],
+					'email' => $user['email'],
+					'name' => $user['name'],
+					'role_id' => $user['role_id'],
 				];
 
 				// $this->session->set_userdata($data);
@@ -223,13 +255,29 @@ class Api extends REST_Controller {
 			return $this->response(["error" => "email not found"], 400);
 		}
 	}
-  
-	public function logout()
-	{
-		$this->session->unset_userdata('email');
-		$this->session->unset_userdata('role_id');
-		$this->session->unset_userdata('password');
 
-		return $this->response(['logout successfully.'], REST_Controller::HTTP_OK);
+	public function rekap_get($year, $month)
+	{
+		$data['year'] = $year;
+		$data['month'] = $month;
+		$data['monthTemp'] = $this->admin_model->monthstr($data['month']);
+		$anggaranBulanTemp = $this->rekap_model->anggaran_bulan($data);	
+		$pengeluaranBulanTemp = $this->rekap_model->pengeluaran_bulan($data);
+
+		$data['anggaran_bulan'] = intval($anggaranBulanTemp[0]->anggaran);
+		$data['pengeluaran_bulan'] = intval($pengeluaranBulanTemp[0]->pengeluaran);
+		$data['sisa_anggaran'] = $anggaranBulanTemp[0]->anggaran - $pengeluaranBulanTemp[0]->pengeluaran;
+		$data['rekap'] = $this->rekap_model->rekap($data);
+
+		return $this->response($data, REST_Controller::HTTP_OK);
 	}
+  
+	// public function logout()
+	// {
+	// 	$this->session->unset_userdata('email');
+	// 	$this->session->unset_userdata('role_id');
+	// 	$this->session->unset_userdata('password');
+
+	// 	return $this->response(['logout successfully.'], REST_Controller::HTTP_OK);
+	// }
 }
