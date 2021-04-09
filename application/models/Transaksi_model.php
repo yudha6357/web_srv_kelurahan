@@ -27,6 +27,16 @@ class Transaksi_model extends CI_Model
 		return $data;
 	}
 
+	function get_bulan_data($bulan_num)
+	{
+		$this->db->select('transaksi.id,transaksi.kode,transaksi.kegiatan,transaksi.pengeluaran,transaksi.tanggal,tahun.tahun,');
+		$this->db->from('transaksi');
+		$this->db->join('tahun', 'tahun.id = transaksi.tahun','left');
+		$this->db->where('Month(tanggal)', $bulan_num);
+		$data = $this->db->get();
+		return $data;
+	}
+
 	function save($data)
 	{
 		$data['created_at'] = date("Y-m-d");

@@ -23,7 +23,7 @@ class Rekap_model extends CI_Model
 	function pengeluaran_bulan($data)
 	{
 		$query = $this->db->query("SELECT SUM(tr.pengeluaran) as pengeluaran FROM `transaksi` tr RIGHT JOIN tahun ta on tr.tahun = ta.id WHERE Month(tr.tanggal) =".$data['monthTemp']." AND Year(tr.tanggal) =".$data['year']." AND Year(tr.tanggal) = ta.tahun")->result();
-		
+
 		return $query;
 	}
 
@@ -44,6 +44,7 @@ class Rekap_model extends CI_Model
 			'November',
 			'Desember',
 		];
+
 		$array = array();
 
 		foreach ($query as $row) {
@@ -53,6 +54,7 @@ class Rekap_model extends CI_Model
 			$anggaran = $this->db->get()->result();
 			$array[] = $anggaran[0]->anggaran;
 		}
+
 		return $array;
 	}
 
@@ -71,8 +73,8 @@ class Rekap_model extends CI_Model
 			'10',
 			'11',
 			'12',
-
 		];
+
 		$array = array();
 
 		foreach ($query as $row) {

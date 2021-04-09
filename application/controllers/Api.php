@@ -21,9 +21,28 @@ class Api extends REST_Controller {
 		return $this->response($data, REST_Controller::HTTP_OK);
 	}
 
+	public function anggaran_bulan_get($bulan)
+	{
+		$this->db->select('anggaran.id,anggaran.kode,anggaran.kegiatan,anggaran.kode,anggaran.anggaran,anggaran.volume,anggaran.bulan_realisasi,tahun.tahun');
+		$this->db->from('anggaran');
+		$this->db->join('tahun', 'tahun.id = anggaran.tahun', 'left');
+		$this->db->like('bulan_realisasi', $bulan);
+		$data = $this->db->get();
+		$response['anggaran'] = $data->result();
+
+		return $this->response($response, REST_Controller::HTTP_OK);
+	}
+
 	public function transaksi_get()
 	{
 		$data['transaksi'] = $this->transaksi_model->get_data()->result();
+
+		return $this->response($data, REST_Controller::HTTP_OK);
+	}
+
+	public function transaksi_bulan_get($bulan_num)
+	{
+		$data['transaksi'] = $this->transaksi_model->get_bulan_data($bulan_num)->result();
 
 		return $this->response($data, REST_Controller::HTTP_OK);
 	}
@@ -105,6 +124,48 @@ class Api extends REST_Controller {
 		return $this->response($data, REST_Controller::HTTP_OK);
 	}
 
+	public function anggaran_update_post($id)
+	{
+		$raw = json_decode($this->input->raw_input_stream, true);
+		
+		if (!$raw) {
+			$raw = [];
+		}
+
+		$kode = array_key_exists('kode', $raw) ? $raw['kode'] : $this->input->post('kode');
+		$kegiatan = array_key_exists('kegiatan', $raw) ? $raw['kegiatan'] : $this->input->post('kegiatan');
+		$anggaran = array_key_exists('anggaran', $raw) ? $raw['anggaran'] : $this->input->post('anggaran');
+		$volume = array_key_exists('volume', $raw) ? $raw['volume'] : $this->input->post('volume');
+		$tahun = array_key_exists('tahun', $raw) ? $raw['tahun'] : $this->input->post('tahun');
+		$bulan_realisasi = array_key_exists('bulan_realisasi', $raw) ? $raw['bulan_realisasi'] : $this->input->post('bulan_realisasi');
+
+		$data = array(
+			'kode' => $kode,
+			'kegiatan' => $kegiatan,
+			'anggaran' => $anggaran,
+			'volume' => $volume,
+			'tahun' => $tahun,
+			'bulan' => $bulan_realisasi,
+		);
+
+		$data['bulan_realisasi'] = json_encode($data['bulan']);
+		unset($data['bulan']);
+	
+		$where = array(
+			'id' => $id
+		);
+
+		$this->anggaran_model->update($where, $data);
+
+		return $this->response($data, REST_Controller::HTTP_OK);
+	}
+
+	public function anggaran_destroy_post($id)
+	{
+		$this->anggaran_model->delete($id);
+		return $this->response(['msg' => 'success'], REST_Controller::HTTP_OK);
+	}
+
 	public function transaksi_post()
 	{
 		$raw = json_decode($this->input->raw_input_stream, true);
@@ -142,16 +203,26 @@ class Api extends REST_Controller {
 		return $this->response($data, REST_Controller::HTTP_OK);
 	}
 
-	public function transaksiUpdate_post($id)
+	public function transaksi_update_post($id)
 	{
-		$kode = $this->input->post('kode');
-		$kegiatan = $this->input->post('kegiatan');
-		$pengeluaran = $this->input->post('pengeluaran');
+		$raw = json_decode($this->input->raw_input_stream, true);
+		
+		if (!$raw) {
+			$raw = [];
+		}
+
+		$kode = array_key_exists('kode', $raw) ? $raw['kode'] : $this->input->post('kode');
+		$kegiatan = array_key_exists('kegiatan', $raw) ? $raw['kegiatan'] : $this->input->post('kegiatan');
+		$pengeluaran = array_key_exists('pengeluaran', $raw) ? $raw['pengeluaran'] : $this->input->post('pengeluaran');
+		$tanggal = array_key_exists('tanggal', $raw) ? $raw['tanggal'] : $this->input->post('tanggal');
+		$tahun = array_key_exists('tahun', $raw) ? $raw['tahun'] : $this->input->post('tahun');
 
 		$data = array(
 			'kode' => $kode,
 			'kegiatan' => $kegiatan,
 			'pengeluaran' => $pengeluaran,
+			'tanggal' => $tanggal,
+			'tahun' => $tahun
 		);
 
 		$where = array(
@@ -159,8 +230,36 @@ class Api extends REST_Controller {
 		);
 
 		$this->transaksi_model->update($where, $data, 'transaksi');
-		$this->response(['Item created successfully.'], REST_Controller::HTTP_OK);
+
+		return $this->response($data, REST_Controller::HTTP_OK);
 	}
+
+	public function transaksi_destroy_post($id)
+	{
+		$this->transaksi_model->delete($id);
+
+		return $this->response(['msg' => 'success'], REST_Controller::HTTP_OK);
+	}
+
+	// public function transaksiUpdate_post($id)
+	// {
+	// 	$kode = $this->input->post('kode');
+	// 	$kegiatan = $this->input->post('kegiatan');
+	// 	$pengeluaran = $this->input->post('pengeluaran');
+
+	// 	$data = array(
+	// 		'kode' => $kode,
+	// 		'kegiatan' => $kegiatan,
+	// 		'pengeluaran' => $pengeluaran,
+	// 	);
+
+	// 	$where = array(
+	// 		'id' => $id
+	// 	);
+
+	// 	$this->transaksi_model->update($where, $data, 'transaksi');
+	// 	$this->response(['Item created successfully.'], REST_Controller::HTTP_OK);
+	// }
 
 	public function dashboard_get(){
 

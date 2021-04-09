@@ -59,7 +59,6 @@ class Rekap extends CI_Controller
 		$data['rekap'] = $this->rekap_model->rekap($data);
 
 		echo json_encode($data);
-
 	}
 
 	public function pdf()
